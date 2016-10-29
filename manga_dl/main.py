@@ -23,5 +23,10 @@ LICENSE
 """
 
 
+# imports
+from manga_dl.entities_old.MangaSeries import MangaSeries
+
 def main():
-    pass
+    MangaSeries("http://mangafox.me/manga/mayo_chiki/", "/home/hermann/mayochiki").download_manga()
+
+main()
