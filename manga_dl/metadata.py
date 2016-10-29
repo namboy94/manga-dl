@@ -69,12 +69,12 @@ class General:
     Class that stores general information about a project
     """
 
-    project_description = "An XDCC Downloader"
+    project_description = "An Manga Downloader"
     """
     A short description of the project
     """
 
-    version_number = "0.2.0"
+    version_number = "0.0.1"
     """
     The current version of the program.
     """
