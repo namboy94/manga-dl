@@ -22,6 +22,8 @@ This file is part of manga_dl.
 LICENSE
 """
 
+from manga_dl.main import main
 
-def main():
-    pass
+
+if __name__ == "__main__":
+    main()
