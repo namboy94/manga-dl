@@ -48,9 +48,9 @@ def main() -> None:
 
     if args.url:
 
-        series_name = args.url.rsplit("/", 1)[1]
+        series_name = args.url.rsplit("/", 1)[1].title().replace("_", " ")
         if not series_name:
-            series_name = args.url.rsplit("/", 2)[1]
+            series_name = args.url.rsplit("/", 2)[1].title().replace("_", " ")
         destination = os.path.join(os.getcwd(), series_name) if not args.destination else args.destination
 
         try:
