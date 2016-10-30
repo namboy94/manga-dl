@@ -24,15 +24,14 @@ LICENSE
 
 # imports
 from typing import List
-
-from manga_dl.entities_old.MangaPage import MangaPage
+from manga_dl.entities.MangaPage import MangaPage
 
 
 class MangaChapter(object):
     """
     Class that models a Chapter of the manga
 
-    Contains download_old links to the individual chapter pages
+    Contains scrapers links to the individual chapter pages
     """
 
     pages = []

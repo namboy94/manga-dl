@@ -30,10 +30,10 @@ from bs4 import BeautifulSoup
 from typing import List, Tuple
 from multiprocessing import Pool
 
-from manga_dl.download_old.GenericMangaScraper import GenericMangaScraper
-from manga_dl.entities_old.MangaChapter import MangaChapter
-from manga_dl.entities_old.MangaPage import MangaPage
-from manga_dl.entities_old.MangaVolume import MangaVolume
+from manga_dl.scrapers.GenericMangaScraper import GenericMangaScraper
+from manga_dl.entities.MangaChapter import MangaChapter
+from manga_dl.entities.MangaPage import MangaPage
+from manga_dl.entities.MangaVolume import MangaVolume
 
 
 class MangaFoxScraper(GenericMangaScraper):

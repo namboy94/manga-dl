@@ -24,12 +24,12 @@ LICENSE
 
 # imports
 from typing import List
-from toktokkie.modules.objects.manga.MangaVolume import MangaVolume
+from manga_dl.entities.MangaVolume import MangaVolume
 
 
 class GenericMangaScraper(object):
     """
-    Class that handles scraping of Manga series from http://jb2448.info/ (Pokemon Special Gallery)
+    Class that models how a Manga Scraper should operate
     """
 
     @staticmethod
@@ -40,7 +40,7 @@ class GenericMangaScraper(object):
         :param manga_url: the URL to check
         :return: True if it matches, False otherwise
         """
-        return manga_url.startswith("http://jb2448.info")
+        raise NotImplementedError()
 
     @staticmethod
     def scrape_volumes_from_url(manga_url: str, manga_directory: str, skip_existing_chapters: bool = False,

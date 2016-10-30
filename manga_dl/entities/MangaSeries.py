@@ -28,9 +28,7 @@ import shutil
 import requests
 from typing import Tuple
 from multiprocessing import Pool
-from puffotter.fileops import ensure_directory_exists
-
-from manga_dl.download_old.MangaScraperManager import MangaScraperManager
+from manga_dl.scrapers.MangaScraperManager import MangaScraperManager
 
 
 class MangaSeries(object):
@@ -82,7 +80,7 @@ class MangaSeries(object):
         """
         Initializes the Manga series
 
-        :param url: the URL for where to look for volumes to download_old
+        :param url: the URL for where to look for volumes to scrapers
         :param root_directory: the directory in which the local copy of the series resides in
         """
 
@@ -120,25 +118,25 @@ class MangaSeries(object):
         else:
             self.scrape()
 
-        if not self.dry_run:
-            ensure_directory_exists(self.root_directory)
+        if not self.dry_run and not os.path.isdir(self.root_directory):
+            os.makedirs(self.root_directory)
 
         download_parameters = []
 
         for volume in self.volumes:
             volume_directory = os.path.join(self.root_directory, volume.get_volume_name())
 
-            if not self.dry_run:
-                ensure_directory_exists(volume_directory)
+            if not self.dry_run and not os.path.isdir(volume_directory):
+                os.makedirs(volume_directory)
 
             for chapter in volume.get_chapters():
                 chapter_directory = os.path.join(volume_directory, chapter.get_chapter_name())
 
-                if not self.dry_run:
-                    ensure_directory_exists(chapter_directory)
+                if not self.dry_run and not os.path.isdir(chapter_directory):
+                    os.makedirs(chapter_directory)
 
                 for page in chapter.get_pages():
-                    page_file = os.path.join(chapter_directory, page.get_page_name())
+                    page_file = os.path.join(chapter_directory, page.get_page_name() + ".jpg")
                     download_parameters.append((page.image_url,
                                                 page_file,
                                                 not update,

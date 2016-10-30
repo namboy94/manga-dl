@@ -24,9 +24,13 @@ LICENSE
 
 
 # imports
-from manga_dl.entities_old.MangaSeries import MangaSeries
+from manga_dl.entities.MangaSeries import MangaSeries
 
 def main():
-    MangaSeries("http://mangafox.me/manga/mayo_chiki/", "/home/hermann/mayochiki").download_manga()
+    mayo = MangaSeries("http://mangafox.me/manga/mayo_chiki/", "/home/hermann/mayochiki")
+    mayo.set_verbose(True)
+    mayo.set_maximum_thread_amount(10)
+    mayo.download_manga(repair=True)
+    mayo.zip(zip_chapters=True)
 
 main()

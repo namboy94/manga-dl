@@ -24,8 +24,7 @@ LICENSE
 
 # import
 from typing import List
-
-from manga_dl.entities_old.MangaChapter import MangaChapter
+from manga_dl.entities.MangaChapter import MangaChapter
 
 
 class MangaVolume(object):

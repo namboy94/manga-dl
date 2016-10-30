@@ -23,8 +23,8 @@ LICENSE
 """
 
 # imports
-from manga_dl.download_old.GenericMangaScraper import GenericMangaScraper
-from manga_dl.download_old.MangaFoxScraper import MangaFoxScraper
+from manga_dl.scrapers.GenericMangaScraper import GenericMangaScraper
+from manga_dl.scrapers.MangaFoxScraper import MangaFoxScraper
 
 
 class MangaScraperManager(object):
