@@ -22,15 +22,45 @@ This file is part of manga_dl.
 LICENSE
 """
 
-
 # imports
-from manga_dl.entities.MangaSeries import MangaSeries
+import os
+import argparse
+import multiprocessing
+from manga_dl.entities.MangaSeries import MangaSeries, MangaScraperNotFoundError
 
-def main():
-    mayo = MangaSeries("http://mangafox.me/manga/mayo_chiki/", "/home/hermann/mayochiki")
-    mayo.set_verbose(True)
-    mayo.set_maximum_thread_amount(10)
-    mayo.download_manga(repair=True)
-    mayo.zip(zip_chapters=True)
 
-main()
+def main() -> None:
+    """
+    Parses CLI arguments and starts the program
+
+    :return: None
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--url")
+    parser.add_argument("-d", "--destination")
+    parser.add_argument("-t", "--threads", type=int, default=multiprocessing.cpu_count())
+    parser.add_argument("-v", "--verbose", action="store_true", default=False)
+    parser.add_argument("--zip_chapters", action="store_true", default=False)
+    parser.add_argument("--zip_volumes", action="store_true", default=False)
+    parser.add_argument("--repair", action="store_true", default=False)
+    parser.add_argument("--update", action="store_true", default=False)
+    args = parser.parse_args()
+
+    if args.url:
+
+        series_name = args.url.rsplit("/", 1)[1]
+        if not series_name:
+            series_name = args.url.rsplit("/", 2)[1]
+        destination = os.path.join(os.getcwd(), series_name) if not args.destination else args.destination
+
+        try:
+            series = MangaSeries(args.url, destination)
+            series.set_verbose(args.verbose)
+            series.set_maximum_thread_amount(args.threads)
+            series.download_manga(update=args.update, repair=args.repair)
+            series.zip(zip_chapters=args.zip_chapters, zip_volumes=args.zip_volumes)
+        except MangaScraperNotFoundError:
+            print("The provided URL is not supported")
+
+    else:
+        print("No valid argument combination supplied. See --help for more details")

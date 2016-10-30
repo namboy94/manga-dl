@@ -31,6 +31,12 @@ from multiprocessing import Pool
 from manga_dl.scrapers.MangaScraperManager import MangaScraperManager
 
 
+class MangaScraperNotFoundError(Exception):
+    """
+    Exception raised when no applicable manga scraper was found
+    """
+
+
 class MangaSeries(object):
     """
     Class that models a Manga series. It is the entry point for all operations
@@ -82,11 +88,15 @@ class MangaSeries(object):
 
         :param url: the URL for where to look for volumes to scrapers
         :param root_directory: the directory in which the local copy of the series resides in
+        :raises: MangaScraperManager, if no applicable manga scraper was found
         """
 
         self.url = url
         self.root_directory = root_directory
         self.scraper = MangaScraperManager.get_scraper_for(url)  # Automatically find the correct scraper
+
+        if self.scraper is None:
+            raise MangaScraperNotFoundError()
 
     def scrape(self, skip_existing_chapters: bool = False) -> None:
         """
