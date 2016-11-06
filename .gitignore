@@ -49,3 +49,4 @@ ENV/
 .spyderproject
 .ropeproject
 .idea
+doc/build
