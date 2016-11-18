@@ -44,6 +44,28 @@ run_unit_tests_python_3_with_coverage:
     - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/manga-downloader --delete-before
     - python3 builder.py coverage-html /var/www/coverage.namibsun.net/public_html
 
+install_on_linux:
+  stage: install
+  only:
+    - master
+    - develop
+  tags:
+    - linux
+    - python
+  script:
+    - python3 setup.py install --user
+
+install_on_windows:
+  stage: install
+  only:
+    - master
+    - develop
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py install
+
 pyinstaller_linux:
   stage: build
   only:
