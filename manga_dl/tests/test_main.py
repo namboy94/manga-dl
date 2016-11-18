@@ -23,32 +23,23 @@ LICENSE
 """
 
 # imports
+import os
+import sys
+import shutil
 import unittest
-from manga_dl.scrapers.GenericMangaScraper import GenericMangaScraper
+from manga_dl.main import main
 
 
 class UnitTests(unittest.TestCase):
+
     def setUp(self):
-        pass
+        sys.argv = [sys.argv[0]]
 
     def tearDown(self):
         pass
 
-    def test_is_abstract_class(self):
-        try:
-            GenericMangaScraper.get_series_name("test")
-            self.assertTrue(False)
-        except NotImplementedError:
-            pass
-
-        try:
-            GenericMangaScraper.url_match("test")
-            self.assertTrue(False)
-        except NotImplementedError:
-            pass
-
-        try:
-            GenericMangaScraper.scrape_volumes_from_url("Test", "test")
-            self.assertTrue(False)
-        except NotImplementedError:
-            pass
+    def test(self):
+        sys.argv.append("http://mangafox.me/manga/magi_no_okurimono/")
+        main()
+        self.assertTrue(os.path.isdir("Magi No Okurimono"))
+        shutil.rmtree("Magi No Okurimono")
