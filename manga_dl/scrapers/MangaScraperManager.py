@@ -49,3 +49,14 @@ class MangaScraperManager(object):
             if scraper.url_match(manga_url):
                 return scraper
         return None
+
+    @staticmethod
+    def get_series_name_from_url(manga_url: str) -> str:
+        """
+        Tryes to figure out the name of a manga series from its URL
+
+        :param manga_url: The URL to check
+        :return:          The series name, or an emtpy string if no applicable parser exists
+        """
+        scraper = MangaScraperManager.get_scraper_for(manga_url)
+        return scraper.get_series_name(manga_url) if scraper is not None else ""

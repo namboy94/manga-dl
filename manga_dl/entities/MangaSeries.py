@@ -88,7 +88,7 @@ class MangaSeries(object):
 
         :param url: the URL for where to look for volumes to scrapers
         :param root_directory: the directory in which the local copy of the series resides in
-        :raises: MangaScraperManager, if no applicable manga scraper was found
+        :raises: MangaScraperNotFound, if no applicable manga scraper was found
         """
 
         self.url = url
@@ -124,7 +124,7 @@ class MangaSeries(object):
             print("Scraping " + self.url)
 
         if update:
-            self.scrape(True)
+            self.scrape(skip_existing_chapters=True)
         else:
             self.scrape()
 

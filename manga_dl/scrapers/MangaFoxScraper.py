@@ -69,6 +69,19 @@ class MangaFoxScraper(GenericMangaScraper):
         return MangaPage(image_number, image_url)
 
     @staticmethod
+    def get_series_name(manga_url: str) -> str:
+        """
+        Returns the very end of the URL, as this is the name of the series
+
+        :param manga_url: The URL to parse
+        :return:          The series name
+        """
+        series_name = manga_url.rsplit("/", 1)[1].title().replace("_", " ")
+        if not series_name:
+            series_name = manga_url.rsplit("/", 2)[1].title().replace("_", " ")
+        return series_name.title()
+
+    @staticmethod
     def url_match(manga_url: str) -> bool:
         """
         Checks if a URL matches the pattern expected by the scraper

@@ -43,6 +43,16 @@ class GenericMangaScraper(object):
         raise NotImplementedError()
 
     @staticmethod
+    def get_series_name(manga_url: str) -> str:
+        """
+        Parses the URL to determine the series name
+
+        :param manga_url: The URL to parse
+        :return:          The series name
+        """
+        raise NotImplementedError()
+
+    @staticmethod
     def scrape_volumes_from_url(manga_url: str, manga_directory: str, skip_existing_chapters: bool = False,
                                 max_threads: int = 1, verbose: bool = False) -> List[MangaVolume]:
         """
