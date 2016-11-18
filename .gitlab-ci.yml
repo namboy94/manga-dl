@@ -162,8 +162,8 @@ generate_sphinx_documentation:
     - make buildsource
     - make latexpdf
     - make html
-    - rsync -av build/latex/manga-downloader.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/manga_downloader.pdf --delete-before
-    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/manga_downloader --delete-before
+    - rsync -av build/latex/manga-downloader.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/manga-downloader.pdf --delete-before
+    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/manga-downloader --delete-before
     - cd ..
     - python3 builder.py documentation-html /var/www/docs.namibsun.net/public_html
 
@@ -176,7 +176,7 @@ gitstats:
     - linux
   script:
     - gitstats . gitstats
-    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/manga_downloader --delete-before
+    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/manga-downloader --delete-before
     - git_stats generate
-    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/manga_downloader --delete-before
+    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/manga-downloader --delete-before
     - python3 builder.py gitstats-html /var/www/gitstats.namibsun.net/public_html
