@@ -25,7 +25,7 @@ LICENSE
 # imports
 import os
 import argparse
-import multiprocessing
+# import multiprocessing
 from manga_dl.metadata import SentryLogger
 from manga_dl.scrapers.MangaScraperManager import MangaScraperManager
 from manga_dl.entities.MangaSeries import MangaSeries, MangaScraperNotFoundError
@@ -43,7 +43,7 @@ def main() -> None:
         parser = argparse.ArgumentParser()
         parser.add_argument("url")
         parser.add_argument("-d", "--destination")
-        parser.add_argument("-t", "--threads", type=int, default=multiprocessing.cpu_count())
+        parser.add_argument("-t", "--threads", type=int, default=1)  # default=multiprocessing.cpu_count())
         parser.add_argument("-v", "--verbose", action="store_true", default=False)
         parser.add_argument("--zip_chapters", action="store_true", default=False)
         parser.add_argument("--zip_volumes", action="store_true", default=False)

@@ -64,7 +64,8 @@ class MangaFoxScraper(GenericMangaScraper):
         image_soup = BeautifulSoup(image_html, "html.parser")
 
         image = image_soup.select("img")[0]
-        image_url = str(image).split("src='")[1].split("'")[0]
+        image_url = str(image).split("src=\"")[1].split("\"")[0]
+        image_url = image_url.replace("amp;", "")
 
         return MangaPage(image_number, image_url)
 
