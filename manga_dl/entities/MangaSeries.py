@@ -271,6 +271,7 @@ class MangaSeries(object):
         :return: None
         """
         url, destination, overwrite_existing, repair, verbose, dry_run = options
+        print("Downloading " + url)
 
         if not overwrite_existing and os.path.isfile(destination):
             return

@@ -55,13 +55,19 @@ class MangaFoxScraper(GenericMangaScraper):
         """
 
         image_number, verbose, chapter_base_url = options
-
-        if verbose:
-            print("Scraping Page " + str(image_number))
-
         image_page_url = chapter_base_url + "/" + str(image_number) + ".html"
-        image_html = requests.get(image_page_url).text
+
+        # When using multiple threads, sometimes 503 errors occur, which is why we try until we succeed!
+        result = requests.get(image_page_url)
+        while result.status_code != 200:
+            result = requests.get(image_page_url)
+
+        image_html = result.text
         image_soup = BeautifulSoup(image_html, "html.parser")
+
+        if len(str(image_soup)) == 204:
+            print(image_soup)
+            raise Exception
 
         image = image_soup.select("img")[0]
         image_url = str(image).split("src=\"")[1].split("\"")[0]
@@ -162,7 +168,7 @@ class MangaFoxScraper(GenericMangaScraper):
 
                 page_objects = threadpool.map(MangaFoxScraper.parse_page, page_arguments)
 
-                # Cleans up RAM
+                # Waits for threads to finish
                 threadpool.close()
                 threadpool.join()
 
