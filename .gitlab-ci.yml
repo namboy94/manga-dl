@@ -150,8 +150,7 @@ generate_sphinx_documentation:
     - master
     - develop
   tags:
-    - linux
-    - python
+    - linux-buildserver
   script:
     - cd doc
     - make buildsource
@@ -168,7 +167,7 @@ gitstats:
     - master
     - develop
   tags:
-    - linux
+    - linux-buildserver
   script:
     - gitstats . gitstats
     - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/manga-downloader --delete-before
@@ -179,7 +178,7 @@ update_html_pages:
   stage: finalize
   when: always
   tags:
-    - production
+    - linux-buildserver
   script:
     - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
     - python html-index-generator/html-index-generator.py /var/www/coverage.namibsun.net/public_html
