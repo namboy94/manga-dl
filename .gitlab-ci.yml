@@ -79,7 +79,7 @@ pyinstaller_windows:
   script:
     - python setup.py install
     - mkdir artifacts
-    - pyinstaller manga_dl/main.py --onefile --windowed --icon=manga_dl/resources/logo/logo.ico
+    - pyinstaller manga_dl/main.py --onefile --windowed --icon=manga_dl/resources/images/logo.ico
     - dir
     - move dist\main.exe artifacts\manga-downloader-windows.exe
   artifacts:
