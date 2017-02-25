@@ -1,0 +1,9 @@
+V 0.1.3
+  - Fixed Documentation generation
+V 0.1.2
+  - Fixed uploading to pypi
+V 0.1.1
+  - Fixed build process
+V 0.1.0
+  - Created basic structure of the program
+  - Implemented CLI

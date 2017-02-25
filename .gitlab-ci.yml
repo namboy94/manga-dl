@@ -10,7 +10,7 @@ stages:
 
 variables:
   GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
-  GITHUB_OAUTH_TOKEN: "$GITHUB_OAUTH_TOKEN"
+  GITHUB_OAUTH_TOKEN: "$GITHUB_ACCESS_TOKEN"
 
 github_mirror:
   stage: mirror
@@ -55,24 +55,6 @@ run_unit_tests_windows:
   script:
     - python setup.py test
 
-install_on_linux:
-  stage: install
-  only:
-    - master
-  tags:
-    - linux-buildserver
-  script:
-    - python3 setup.py install --user
-
-install_on_windows:
-  stage: install
-  only:
-    - master
-  tags:
-    - buildserver_windows
-  script:
-    - python setup.py install
-
 pyinstaller_linux:
   stage: build
   only:
@@ -97,7 +79,7 @@ pyinstaller_windows:
   script:
     - python setup.py install
     - mkdir artifacts
-    - pyinstaller manga_dl/main.py --onefile --windowed --icon=manga_dl/resources/logo/logo.ico
+    - pyinstaller manga_dl/main.py --onefile --windowed --icon=manga_dl/resources/images/logo.ico
     - dir
     - move dist\main.exe artifacts\manga-downloader-windows.exe
   artifacts:
