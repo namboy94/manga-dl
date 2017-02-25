@@ -1,4 +1,5 @@
 # Manga Downloader
+![Logo](manga_dl/resources/images/logo-readme.png "Logo")
 
 This is a Manga Downloader that can download managa series from various sources.
 
