@@ -1,0 +1,171 @@
+stages:
+  - mirror
+  - test
+  - install
+  - build
+  - deploy
+  - release
+  - docstats
+  - finalize
+
+variables:
+  GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
+  GITHUB_OAUTH_TOKEN: "$GITHUB_ACCESS_TOKEN"
+
+github_mirror:
+  stage: mirror
+  tags:
+    - linux-buildserver
+  script:
+    - git checkout master
+    - git pull
+    - git push git@github.com:namboy94/manga-downloader.git master -f
+    - git checkout develop
+    - git pull
+    - git push git@github.com:namboy94/manga-downloader.git develop -f
+
+stylecheck:
+  stage: test
+  tags:
+    - linux-buildserver
+  script:
+    - pep8 . --max-line-length 120
+
+run_unit_tests_python_2:
+  stage: test
+  tags:
+    - linux-buildserver
+  script:
+    - 3to2 . --write
+    - python2 setup.py test
+
+run_unit_tests_python_3_with_coverage:
+  stage: test
+  tags:
+    - linux-buildserver
+  script:
+    - python3 setup.py nosetests
+      --with-coverage --cover-package=manga_dl --cover-branches --cover-erase --cover-html --cover-inclusive
+    - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/manga-downloader --delete-before
+
+run_unit_tests_windows:
+  stage: test
+  tags:
+    - buildserver_windows
+  script:
+    - python setup.py test
+
+pyinstaller_linux:
+  stage: build
+  only:
+    - master
+  tags:
+    - linux-buildserver
+  script:
+    - python3 setup.py install --user
+    - mkdir -p artifacts
+    - pyinstaller manga_dl/main.py --onefile
+    - mv dist/main artifacts/manga-downloader-linux
+  artifacts:
+    paths:
+      - artifacts/*
+
+pyinstaller_windows:
+  stage: build
+  only:
+    - master
+  tags:
+    - buildserver_windows
+  script:
+    - python setup.py install
+    - mkdir artifacts
+    - pyinstaller manga_dl/main.py --onefile --windowed --icon=manga_dl/resources/logo/logo.ico
+    - dir
+    - move dist\main.exe artifacts\manga-downloader-windows.exe
+  artifacts:
+    paths:
+      - artifacts/*
+
+pypi_dist:
+  stage: deploy
+  only:
+    - master
+  tags:
+    - linux-buildserver
+  script:
+    - python3 setup.py register sdist upload
+    - python3 setup.py bdist_wheel upload
+    - 3to2 . --write
+    - rm -rf dist
+    - python2 setup.py bdist_wheel
+    - twine upload dist/*
+
+upload_release_to_github:
+  stage: release
+  only:
+    - master
+  tags:
+    - linux-buildserver
+  script:
+    - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
+    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
+    - python github-release-uploader/github-release-uploader.py namboy94 manga-downloader $GITHUB_OAUTH_TOKEN
+      $(python3 setup.py -V) current_changelog artifacts -b master
+
+upload_release_to_gitlab:
+  stage: release
+  only:
+    - master
+  tags:
+    - linux-buildserver
+  script:
+    - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
+    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
+    - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 manga-downloader $GITLAB_ACCESS_TOKEN
+      $(python3 setup.py -V) current_changelog artifacts -b master -u https://gitlab.namibsun.net
+
+generate_sphinx_documentation:
+  stage: docstats
+  only:
+    - master
+    - develop
+  tags:
+    - linux-buildserver
+  script:
+    - cd doc
+    - make buildsource
+    - make latexpdf
+    - make html
+    - rsync -av build/latex/manga-downloader.pdf
+      /var/www/docs.namibsun.net/public_html/pdf_docs/manga-downloader.pdf --delete-before
+    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/manga-downloader --delete-before
+    - cd ..
+
+gitstats:
+  stage: docstats
+  only:
+    - master
+    - develop
+  tags:
+    - linux-buildserver
+  script:
+    - gitstats . gitstats
+    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/manga-downloader --delete-before
+    - git_stats generate
+    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/manga-downloader --delete-before
+
+update_html_pages:
+  stage: finalize
+  when: always
+  tags:
+    - linux-buildserver
+  script:
+    - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
+    - python html-index-generator/html-index-generator.py /var/www/coverage.namibsun.net/public_html
+      /var/www/coverage.namibsun.net/public_html/index.html
+    - python html-index-generator/html-index-generator.py /var/www/docs.namibsun.net/public_html
+      /var/www/docs.namibsun.net/public_html/index.html
+    - python html-index-generator/html-index-generator.py /var/www/gitstats.namibsun.net/public_html
+      /var/www/gitstats.namibsun.net/public_html/index.html
