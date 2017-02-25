@@ -4,25 +4,24 @@ This is a Manga Downloader that can download managa series from various sources.
 
 Currently supported are:
 
- * mangafox.me
- 
-## Installation
+ * [Mangafox](http://mangafox.me)
 
-### Via pip
+## Usage
+
+### Installation
+
+**Via pip**
 
     $ pip install manga_dl --user
 
-### From source
+**From source**
 
     $ python setup.py install --user
-    
-### Binary Files
 
-If you woud like to not install the program and instead use a single binary
-file, you can download them from our [Github releases page](https://github.com/namboy94/manga-downloader/releases)
+**Binary Files**
 
-
-## Usage
+If you would like to not install the program and instead use a single binary
+file, you can download them from our [Github releases page](https://github.com/namboy94/manga-downloader/releases).
 
 ### CLI
 
@@ -39,14 +38,14 @@ The CLI does offer some configuration:
   - Specifies the directory in which the series will be stored
   - Defaults to the current working directory + the series name
 * ```--threads```, ```-t``` (type: integer)
-  - Specifies how many threads the program may use.
-  - Defaults to the amount of logical processrs the system has
+  - Specifies how many threads the program may use. Using more threads may speed up the parsing
+  - Defaults to the amount of logical processors the system has
 * ```--verbose```, ```-v```
   - If set, the program will print it's progress to the console
 * ```--update```
   - If set, the program will only check for content that have not been downloaded yet
 * ```--repair```
-  - If set, the program will check each previosuly downloaded file for errors
+  - If set, the program will check each previously downloaded file for errors
   - If errors are found, the file in question is re-downloaded
 * ```--zip-volumes```
   - Zips the series by volume after the download is completed
