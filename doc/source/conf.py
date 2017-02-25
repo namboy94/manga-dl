@@ -9,7 +9,7 @@ from sphinx.ext.autodoc import between
 
 project_version = ""
 sys.path.insert(0, os.path.abspath("../.."))
-exec("from manga_dl.metadata import project_version")
+exec("from manga_dl.metadata import version as project_version")
 
 extensions = [
     'sphinx.ext.autodoc',
