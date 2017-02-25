@@ -26,7 +26,8 @@ LICENSE
 import os
 import argparse
 import multiprocessing
-from manga_dl.metadata import SentryLogger
+from raven import Client
+from manga_dl.metadata import sentry_dsn, version
 from manga_dl.scrapers.MangaScraperManager import MangaScraperManager
 from manga_dl.entities.MangaSeries import MangaSeries, MangaScraperNotFoundError
 
@@ -70,5 +71,6 @@ def main() -> None:
     except KeyboardInterrupt:
         print("Thanks for using manga_dl!")
     except Exception as e:
-        SentryLogger.sentry.captureException()
+        sentry = Client(dsn=sentry_dsn, release=version)
+        sentry.captureException()
         raise e

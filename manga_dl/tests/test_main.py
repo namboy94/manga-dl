@@ -23,11 +23,11 @@ LICENSE
 """
 
 # imports
-import os
+# import os
 import sys
-import shutil
+# import shutil
 import unittest
-from manga_dl.main import main
+# from manga_dl.main import main
 
 
 class UnitTests(unittest.TestCase):
