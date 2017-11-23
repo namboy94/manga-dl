@@ -9,7 +9,7 @@ from sphinx.ext.autodoc import between
 
 project_version = ""
 sys.path.insert(0, os.path.abspath("../.."))
-exec("from manga_dl.metadata import version as project_version")
+exec("from manga_dl import version as project_version")
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -23,7 +23,7 @@ master_doc = 'index'
 # noinspection PyShadowingBuiltins
 copyright = '2016, Hermann Krumrey'
 author = 'Hermann Krumrey'
-project = 'manga-downloader'
+project = 'manga-dl'
 
 version = project_version
 release = version
@@ -37,27 +37,27 @@ todo_include_todos = False
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_static_path = ['.static']
-htmlhelp_basename = 'manga-downloader-doc'
+htmlhelp_basename = 'manga-dl-doc'
 
 
 # Latex
 latex_elements = {
 }
 latex_documents = [
-    (master_doc, 'manga-downloader.tex', 'manga-downloader Documentation',
+    (master_doc, 'manga-dl.tex', 'manga-dl Documentation',
      'Hermann Krumrey', 'manual'),
 ]
 
 # Man Pages
 man_pages = [
-    (master_doc, 'manga-downloader', 'manga-downloader Documentation',
+    (master_doc, 'manga-dl', 'manga-dl Documentation',
      [author], 1)
 ]
 
 # Tex
 texinfo_documents = [
-    (master_doc, 'manga-downloader', 'manga-downloader Documentation',
-     author, 'manga-downloader', 'An XDCC Downloader bot',
+    (master_doc, 'manga-dl', 'manga-dl Documentation',
+     author, 'manga-dl', 'An XDCC Downloader bot',
      'Miscellaneous'),
 ]
 
@@ -78,6 +78,13 @@ def setup(app) -> None:
     :param app: The sphinx app
     :return:    None
     """
-    app.connect('autodoc-process-docstring', between('^.*LICENSE.*$', exclude=True))
-    app.connect("autodoc-skip-member", lambda a, b, name, d, skipper, f: False if name == "__init__" else skipper)
+    app.connect(
+        'autodoc-process-docstring',
+        between('^.*LICENSE.*$', exclude=True)
+    )
+    app.connect(
+        "autodoc-skip-member",
+        lambda a, b, name, d, skipper, f:
+        False if name == "__init__" else skipper
+    )
     return app

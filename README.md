@@ -1,7 +1,8 @@
 # Manga Downloader
+
 |master|develop|
 |:---:|:---:|
-|[![build status](https://gitlab.namibsun.net/namboy94/manga-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/manga-downloader/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/manga-downloader/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/manga-downloader/commits/develop)|
+|[![build status](https://gitlab.namibsun.net/namboy94/manga-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/manga-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/manga-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/manga-dl/commits/develop)|
 
 ![Logo](manga_dl/resources/images/logo-readme.png "Logo")
 
@@ -26,7 +27,7 @@ Currently supported are:
 **Binary Files**
 
 If you would like to not install the program and instead use a single binary
-file, you can download them from our [Github releases page](https://github.com/namboy94/manga-downloader/releases).
+file, you can download them from our [Github releases page](https://github.com/namboy94/manga-dl/releases).
 
 ### CLI
 
@@ -59,12 +60,14 @@ The CLI does offer some configuration:
 
 ## Further Information
 
-* [Changelog](https://gitlab.namibsun.net/namboy94/manga-downloader/raw/master/CHANGELOG)
-* [Gitlab](https://gitlab.namibsun.net/namboy94/manga-downloader)
-* [Github](https://github.com/namboy94/manga-downloader)
+* [Changelog](https://gitlab.namibsun.net/namboy94/manga-dl/raw/master/CHANGELOG)
+* [License (GPLv3)](https://gitlab.namibsun.net/namboy94/manga-dl/raw/master/LICENSE)
+* [Gitlab](https://gitlab.namibsun.net/namboy94/manga-dl)
+* [Github](https://github.com/namboy94/manga-dl)
 * [Python Package Index Site](https://pypi.python.org/pypi/manga_dl)
-* [Documentation(HTML)](https://docs.namibsun.net/html_docs/manga-downloader/index.html)
-* [Documentation(PDF)](https://docs.namibsun.net/pdf_docs/manga-downloader.pdf)
-* [Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/manga-downloader/index.html)
-* [Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/manga-downloader/index.html)
-* [Test Coverage](https://coverage.namibsun.net/manga-downloader/index.html)
+* [Documentation(HTML)](https://docs.namibsun.net/html_docs/manga-dl/index.html)
+* [Documentation(PDF)](https://docs.namibsun.net/pdf_docs/manga-dl.pdf)
+* [Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/manga-dl/index.html)
+* [Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/manga-dl/index.html)
+* [Test Coverage](https://coverage.namibsun.net/manga-dl/index.html)
+
