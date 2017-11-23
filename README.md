@@ -4,7 +4,7 @@
 |:---:|:---:|
 |[![build status](https://gitlab.namibsun.net/namboy94/manga-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/manga-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/manga-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/manga-dl/commits/develop)|
 
-![Logo](manga_dl/resources/images/logo-readme.png "Logo")
+![Logo](resources/logo/logo-readme.png "Logo")
 
 This is a Manga Downloader that can download managa series from various sources.
 
