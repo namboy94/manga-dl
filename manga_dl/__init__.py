@@ -22,7 +22,7 @@ The metadata is stored here. It can be used by any other module in this
 project this way, most notably by the setup.py file
 """
 
-version = "0.1.4"
+version = "0.1.5"
 """
 The current version of the program
 """
