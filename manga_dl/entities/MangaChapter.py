@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2015-2017 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of manga-dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+manga-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    toktokkie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+manga-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    toktokkie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -72,8 +67,9 @@ class MangaChapter(object):
 
     def get_chapter_name(self) -> str:
         """
-        Generates a Chapter name for this chapter based on the chapter number, or returns
-        the chapter name previously set by the set_chapter_name method.
+        Generates a Chapter name for this chapter based on the chapter number,
+        or returns the chapter name previously set by the set_chapter_name
+        method.
 
         :return: the chapter name as a string
         """
