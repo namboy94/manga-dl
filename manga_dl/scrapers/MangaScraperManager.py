@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2015-2017 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of manga-dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+manga-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    toktokkie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+manga-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    toktokkie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -38,7 +33,7 @@ class MangaScraperManager(object):
     """
 
     @staticmethod
-    def get_scraper_for(manga_url: str) -> GenericMangaScraper:
+    def get_scraper_for(manga_url: str) -> type(GenericMangaScraper):
         """
         Returns the correct scraper for a specified manga URL
         :param manga_url: the URL of the Manga series
@@ -56,7 +51,9 @@ class MangaScraperManager(object):
         Tryes to figure out the name of a manga series from its URL
 
         :param manga_url: The URL to check
-        :return:          The series name, or an emtpy string if no applicable parser exists
+        :return:          The series name,
+                          or an emtpy string if no applicable parser exists
         """
         scraper = MangaScraperManager.get_scraper_for(manga_url)
-        return scraper.get_series_name(manga_url) if scraper is not None else ""
+        return scraper.get_series_name(manga_url) if scraper is not None \
+            else ""

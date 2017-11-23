@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2015-2017 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of manga-dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+manga-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    toktokkie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+manga-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    toktokkie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -42,8 +37,8 @@ class MangaSeries(object):
     Class that models a Manga series. It is the entry point for all operations
     related to downloading, repairing and zipping manga series.
 
-    It offers an automatic scraper detection system that tries to find a fitting scraper for
-    the URL provided
+    It offers an automatic scraper detection system that tries to find a
+    fitting scraper for the URL provided
     """
 
     url = ""
@@ -73,8 +68,8 @@ class MangaSeries(object):
 
     dry_run = False
     """
-    Flag that can be set to disable any changes to the system, i.e. a dry run akin
-    to the rsync dry run flag '-n'
+    Flag that can be set to disable any changes to the system,
+    i.e. a dry run akin to the rsync dry run flag '-n'
     """
 
     max_threads = 1
@@ -87,37 +82,45 @@ class MangaSeries(object):
         Initializes the Manga series
 
         :param url: the URL for where to look for volumes to scrapers
-        :param root_directory: the directory in which the local copy of the series resides in
+        :param root_directory: the directory in which the local copy of the
+                               series resides in
         :raises: MangaScraperNotFound, if no applicable manga scraper was found
         """
 
         self.url = url
         self.root_directory = root_directory
-        self.scraper = MangaScraperManager.get_scraper_for(url)  # Automatically find the correct scraper
+
+        # Automatically find the correct scraper
+        self.scraper = MangaScraperManager.get_scraper_for(url)
 
         if self.scraper is None:
             raise MangaScraperNotFoundError()
 
     def scrape(self, skip_existing_chapters: bool = False) -> None:
         """
-        Finds a list of all volumes using the scraper found in the __init__ method
+        Finds a list of all volumes using the scraper found in the __init__
+        method.
 
         :param skip_existing_chapters: Can be set to skip existing chapters
         :return: None
         """
         if self.scraper is not None and len(self.volumes) == 0:
-            self.volumes = self.scraper.scrape_volumes_from_url(self.url,
-                                                                self.root_directory,
-                                                                skip_existing_chapters=skip_existing_chapters,
-                                                                max_threads=self.max_threads,
-                                                                verbose=self.verbose)
+            self.volumes = self.scraper.scrape_volumes_from_url(
+                self.url,
+                self.root_directory,
+                skip_existing_chapters=skip_existing_chapters,
+                max_threads=self.max_threads,
+                verbose=self.verbose
+            )
 
     def download_manga(self, update: bool = False, repair: bool = False):
         """
         Starts downloading the manga series
 
-        :param update: flag to set an update process, i.e. only downloads files that don't exist
-        :param repair: flag to set a repair process, i.e. updates + checks if files are OK
+        :param update: flag to set an update process,
+                       i.e. only downloads files that don't exist
+        :param repair: flag to set a repair process,
+                       i.e. updates + checks if files are OK
         :return: None
         """
         if self.verbose:
@@ -134,19 +137,28 @@ class MangaSeries(object):
         download_parameters = []
 
         for volume in self.volumes:
-            volume_directory = os.path.join(self.root_directory, volume.get_volume_name())
+            volume_directory = os.path.join(
+                self.root_directory,
+                volume.get_volume_name()
+            )
 
             if not self.dry_run and not os.path.isdir(volume_directory):
                 os.makedirs(volume_directory)
 
             for chapter in volume.get_chapters():
-                chapter_directory = os.path.join(volume_directory, chapter.get_chapter_name())
+                chapter_directory = os.path.join(
+                    volume_directory,
+                    chapter.get_chapter_name()
+                )
 
                 if not self.dry_run and not os.path.isdir(chapter_directory):
                     os.makedirs(chapter_directory)
 
                 for page in chapter.get_pages():
-                    page_file = os.path.join(chapter_directory, page.get_page_name() + ".jpg")
+                    page_file = os.path.join(
+                        chapter_directory,
+                        page.get_page_name() + ".jpg"
+                    )
                     download_parameters.append((page.image_url,
                                                 page_file,
                                                 not update,
@@ -161,7 +173,8 @@ class MangaSeries(object):
 
     def update(self) -> None:
         """
-        Updates the current directory with volumes and chapters that do not exist yet
+        Updates the current directory with volumes and chapters
+        that do not exist yet.
 
         :return: None
         """
@@ -169,8 +182,9 @@ class MangaSeries(object):
 
     def repair(self) -> None:
         """
-        Updates the current directory with volumes and chapters that do not exist yet
-        While doing so, every file is checked for consistency and repaced if needed
+        Updates the current directory with volumes and chapters that do not
+        exist yet. While doing so, every file is checked for consistency
+        and replaced if needed.
 
         :return: None
         """
@@ -178,8 +192,8 @@ class MangaSeries(object):
 
     def zip(self, zip_volumes: bool = False, zip_chapters: bool = False):
         """
-        Zips parts of the series together to enable reading in some manga readers,
-        like ComicRack for android
+        Zips parts of the series together to enable reading in some manga
+        readers, like ComicRack for android
 
         :param zip_volumes: flag to enable zipping volumes
         :param zip_chapters: flag to enable zipping chapters
@@ -199,9 +213,14 @@ class MangaSeries(object):
                     for chapter in os.listdir(volume_dir):
                         chapter_dir = os.path.join(volume_dir, chapter)
 
-                        if chapter.startswith("Chapter ") and os.path.isdir(chapter_dir):
+                        if chapter.startswith("Chapter ") \
+                                and os.path.isdir(chapter_dir):
                             if not self.dry_run:
-                                shutil.make_archive(chapter_dir, "zip", chapter_dir)
+                                shutil.make_archive(
+                                    chapter_dir,
+                                    "zip",
+                                    chapter_dir
+                                )
 
     def zip_chapters(self) -> None:
         """
@@ -255,22 +274,25 @@ class MangaSeries(object):
         self.max_threads = max_threads
 
     @staticmethod
-    def download_file(options: Tuple[str, str, bool, bool, bool, bool]) -> None:
+    def download_file(options: Tuple[str, str, bool, bool, bool, bool]) \
+            -> None:
         """
-        Downloads a file, can also be used to repair previously downloaded files
-        Can be run in parallel using the multiprocessing Pool class.
+        Downloads a file, can also be used to repair previously downloaded
+        files. Can be run in parallel using the multiprocessing Pool class.
         This limits the function to a single parameter, a Tuple in this case
 
         :param options: Tuple containing the following parameters:
                             url: the file's URL
                             destination: the local destination for the file
-                            overwrite_existing: flag that enables overwriting existing files
+                            overwrite_existing: flag that enables overwriting
+                                                existing files
                             repair: flag that can be set to enable repair mode
                             verbose: Sets the verbosity flag
                             dry_run: Sets the dry run flag
         :return: None
         """
-        url, destination, overwrite_existing, repair, verbose, dry_run = options
+        url, destination, overwrite_existing, repair, verbose, dry_run = \
+            options
         print("Downloading " + url)
 
         if not overwrite_existing and os.path.isfile(destination):

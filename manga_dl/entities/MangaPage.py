@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2015-2017 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of manga-dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+manga-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    toktokkie is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+manga-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    toktokkie is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
@@ -65,9 +60,10 @@ class MangaPage(object):
 
     def get_page_name(self) -> str:
         """
-        Generates a Page name for this page based on the page number, or returns
-        the page name previously set by the set_page_name method.
+        Generates a Page name for this page based on the page number, or
+        returns the page name previously set by the set_page_name method.
 
         :return: the page name as a string
         """
-        return self.page_name if self.page_name != "" else "Page " + str(self.page_number).zfill(3)
+        return self.page_name if self.page_name != "" \
+            else "Page " + str(self.page_number).zfill(3)
