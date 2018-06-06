@@ -1,5 +1,5 @@
-"""
-Copyright 2015-2017 Hermann Krumrey
+"""LICENSE
+Copyright 2015 Hermann Krumrey <hermann@krumreyh.com>
 
 This file is part of manga-dl.
 
@@ -15,9 +15,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
-"""
+LICENSE"""
 
-# imports
 from manga_dl.scrapers.GenericMangaScraper import GenericMangaScraper
 from manga_dl.scrapers.MangaFoxScraper import MangaFoxScraper
 

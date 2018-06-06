@@ -2,7 +2,7 @@
 
 |master|develop|
 |:---:|:---:|
-|[![build status](https://gitlab.namibsun.net/namboy94/manga-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/manga-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/manga-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/manga-dl/commits/develop)|
+|[![build status](https://gitlab.namibsun.net/namibsun/python/manga-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namibsun/python/manga-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namibsun/python/manga-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namibsun/python/manga-dl/commits/develop)|
 
 ![Logo](resources/logo/logo-readme.png "Logo")
 
@@ -60,14 +60,9 @@ The CLI does offer some configuration:
 
 ## Further Information
 
-* [Changelog](https://gitlab.namibsun.net/namboy94/manga-dl/raw/master/CHANGELOG)
-* [License (GPLv3)](https://gitlab.namibsun.net/namboy94/manga-dl/raw/master/LICENSE)
-* [Gitlab](https://gitlab.namibsun.net/namboy94/manga-dl)
+* [Changelog](CHANGELOG)
+* [License (GPLv3)](LICENSE)
+* [Gitlab](https://gitlab.namibsun.net/namibsun/python/manga-dl)
 * [Github](https://github.com/namboy94/manga-dl)
-* [Python Package Index Site](https://pypi.python.org/pypi/manga_dl)
-* [Documentation(HTML)](https://docs.namibsun.net/html_docs/manga-dl/index.html)
-* [Documentation(PDF)](https://docs.namibsun.net/pdf_docs/manga-dl.pdf)
-* [Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/manga-dl/index.html)
-* [Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/manga-dl/index.html)
-* [Test Coverage](https://coverage.namibsun.net/manga-dl/index.html)
-
+* [Progstats](https://progstats.namibsun.net/projects/manga-dl)
+* [PyPi](https://pypi.org/project/manga-dl)

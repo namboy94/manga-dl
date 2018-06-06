@@ -1,5 +1,5 @@
-"""
-Copyright 2015-2017 Hermann Krumrey
+"""LICENSE
+Copyright 2015 Hermann Krumrey <hermann@krumreyh.com>
 
 This file is part of manga-dl.
 
@@ -15,27 +15,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
-"""
+LICENSE"""
 
 # imports
-# import os
-import sys
-# import shutil
 import unittest
-# from manga_dl.main import main
 
 
 class UnitTests(unittest.TestCase):
-
     def setUp(self):
-        sys.argv = [sys.argv[0]]
+        pass
 
     def tearDown(self):
         pass
 
     def test(self):
         pass
-        # sys.argv.append("http://mangafox.me/manga/magi_no_okurimono/")
-        # main()
-        # self.assertTrue(os.path.isdir("Magi No Okurimono"))
-        # shutil.rmtree("Magi No Okurimono")
