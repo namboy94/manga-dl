@@ -1,3 +1,7 @@
+V 0.2.0:
+  - Added mangadex support
+  - Redid application structure
+  - Now uses docker image for CI
 V 0.1.6:
   - Integrated ci-scripts
 V 0.1.5:

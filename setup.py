@@ -40,7 +40,13 @@ if __name__ == "__main__":
         license="GNU GPL3",
         packages=find_packages(),
         scripts=list(map(lambda x: os.path.join("bin", x), os.listdir("bin"))),
-        install_requires=["bs4", "requests"],
+        install_requires=[
+            "bs4",
+            "requests",
+            "sentry-sdk",
+            "puffotter",
+            "cfscrape"
+        ],
         include_package_data=True,
         zip_safe=False
     )

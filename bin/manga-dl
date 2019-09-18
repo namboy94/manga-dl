@@ -17,8 +17,55 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from manga_dl.main import main
+import argparse
+from manga_dl.scrapers import scrapers
+from manga_dl import sentry_dsn
+from puffotter.init import cli_start, argparse_add_verbosity
+
+
+def main(args: argparse.Namespace):
+    """
+    The main script of the manga-dl program
+    :return: None
+    """
+    if args.url is not None:
+        scraper = None
+        for scraper_cls in scrapers:
+            if scraper_cls.url_matches(args.url):
+                scraper = scraper_cls(
+                    _format=args.format, destination=args.out
+                )
+                break
+
+        chapters = scraper.load_chapters(args.url)
+
+        for c in chapters:
+            print(c.name)
+            c.download()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("url", default=None,
+                        help="The URL from which to download. May be left "
+                             "blank if a specific ID for a connector was "
+                             "provided.")
+    parser.add_argument("-o", "--out",
+                        help="Specifies the output path")
+    parser.add_argument("-f", "--format",
+                        choices={"cbz", "raw"}, default="cbz",
+                        help="The format in which to store the chapters")
+
+    for _scraper_cls in scrapers:
+        parser.add_argument("--{}-id".format(_scraper_cls.name()),
+                            help="Uses specific {} ID instead of an URL"
+                            .format(_scraper_cls.name()))
+
+    argparse_add_verbosity(parser)
+    cli_start(
+        main,
+        parser,
+        "Thanks for using manga-dl!",
+        "manga-dl",
+        sentry_dsn
+    )
