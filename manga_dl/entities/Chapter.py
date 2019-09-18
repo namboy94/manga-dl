@@ -20,10 +20,12 @@ LICENSE"""
 import os
 import shutil
 import logging
+import cfscrape
 from puffotter.os import makedirs
 from typing import Callable, List
 from typing import Optional
 from subprocess import Popen
+from urllib.request import urlretrieve
 
 
 class Chapter:
@@ -39,7 +41,7 @@ class Chapter:
             chapter_number: str,
             destination_dir: str,
             _format: str,
-            page_load_callback: Callable[[str], List[str]]
+            page_load_callback: Callable[['Chapter', str], List[str]]
     ):
         """
         Initializes the manga chapter
@@ -77,7 +79,7 @@ class Chapter:
         :return: The list of page images, in the correct order
         """
         if len(self._pages) == 0:
-            self._pages = self._page_load_callback(self.url)
+            self._pages = self._page_load_callback(self, self.url)
         return self._pages
 
     def download(
@@ -107,8 +109,28 @@ class Chapter:
 
         index_fill = len(str(len(self.pages)))
         downloaded = []
-        for i, image in enumerate(self.pages):
-            pass  # TODO download image into tempdir, append to downloaded
+        for i, image_url in enumerate(self.pages):
+
+            cloudflare = False
+            if image_url.startswith("CF!"):
+                image_url = image_url[3:]
+                cloudflare = True
+
+            ext = image_url.rsplit(".", 1)[1]
+            filename = "{}.{}".format(str(i).zfill(index_fill), ext)
+            image_file = os.path.join(tempdir, filename)
+
+            self.logger.info("Downloading image file {} to {}"
+                             .format(image_url, image_file))
+
+            if cloudflare:
+                scraper = cfscrape.create_scraper()
+                content = scraper.get(image_url).content
+                with open(image_file, "wb") as f:
+                    f.write(content)
+            else:
+                urlretrieve(image_url, image_file)
+            downloaded.append(image_file)
 
         if _format in ["cbz", "zip"]:
             Popen(["zip", "-j", dest_path] + downloaded).wait()

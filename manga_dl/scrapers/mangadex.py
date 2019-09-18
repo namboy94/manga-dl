@@ -17,13 +17,12 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-import os
 import re
+import json
 import cfscrape
 from typing import List
 from manga_dl.entities.Chapter import Chapter
 from manga_dl.scrapers.Scraper import Scraper
-from bs4 import BeautifulSoup
 
 
 class MangaDexScraper(Scraper):
@@ -63,78 +62,66 @@ class MangaDexScraper(Scraper):
         """
         scraper = cfscrape.create_scraper()
 
-        pages = []  # type: List[BeautifulSoup]
+        mangadex_id = url.split("https://mangadex.org/title/")[1].split("/")[0]
+        manga_url = "https://mangadex.org/api/manga/" + str(mangadex_id)
 
-        i = 1
-        limit = None
+        resp = scraper.get(manga_url)
 
-        while limit is None or i <= limit:
-            page_url = os.path.join(url, "A/chapters/" + str(i))
-            current_page = scraper.get(page_url)
+        if resp.status_code >= 300:
+            self.logger.warning("Unsuccessful request ({})"
+                                .format(resp.status_code))
+            self.logger.debug(resp.text)
+            return []
 
-            if current_page.status_code >= 300:
-                self.logger.warning("Unsuccessful request ({})"
-                                    .format(current_page.status_code))
-                self.logger.debug(current_page.text)
-                return []
-
-            page_soup = BeautifulSoup(current_page.text, "html.parser")
-            pages.append(page_soup)
-
-            if limit is None:
-                try:
-                    limit = int(page_soup.select(".page-link")[-2].text)
-                except IndexError:
-                    limit = 1
-                self.logger.debug("{} pages found".format(limit))
-
-            i += 1
-
-        series_name = pages[0].\
-            select(".card-header")[0].\
-            select(".mx-1")[0].text
-        self.logger.debug("Series name: {}".format(series_name))
+        series_info = json.loads(resp.text)
+        series_title = series_info["manga"]["title"]
+        chapter_list = series_info["chapter"]
 
         chapters = []
 
-        for page in pages:
-            rows = page.select(".chapter-row")
-            rows.pop(0)
+        for chapter_id, chapter in chapter_list.items():
+            chapter_url = "https://mangadex.org/api/chapter/" + str(chapter_id)
+            chapters.append(Chapter(
+                chapter_url,
+                chapter["lang_code"],
+                series_title,
+                chapter["chapter"],
+                self.destination,
+                self.format,
+                self.get_image_pages
+            ))
 
-            for row in rows:
-                text = row.select(".text-truncate")[0]
-                title = text.text
-                url = "https://mangadex.org" + text.find("a")["href"]
-                lang = row.select(".chapter-list-flag")[0].\
-                    find("span")["title"].lower()
-
-                chapter_number = title.split("Ch. ")[1].split(" -")[0]
-
-                chapter = Chapter(
-                    url,
-                    lang,
-                    series_name,
-                    chapter_number,
-                    self.destination,
-                    self.format,
-                    self.get_image_pages
-                )
-                chapters.append(chapter)
         return chapters
 
     @staticmethod
-    def get_image_pages(url: str) -> List[str]:
+    def get_image_pages(_self: Chapter, url: str) -> List[str]:
         """
         Callback method for the Chapter object.
         Loads the correct image URL for a page
+        :param _self: The chapter that calls this method
         :param url: The base chapter URL
         :return: The page image URLs
         """
-        print(url)
-
         scraper = cfscrape.create_scraper()
-        page = scraper.get(url)
+        resp = scraper.get(url)
 
-        open("X.html", "w").write(page.text)
+        if resp.status_code >= 300:
+            _self.logger.warning("Unsuccessful request ({})"
+                                 .format(resp.status_code))
+            _self.logger.debug(resp.text)
+            return []
 
-        exit()
+        chapter_info = json.loads(resp.text)
+        image_urls = []
+
+        server = chapter_info["server"]
+        if server == "/data/":
+            server = "CF!https://mangadex.org/data/"  # Cloudflare protected
+
+        chapter_hash = chapter_info["hash"]
+        base_url = server + chapter_hash + "/"
+
+        for page in chapter_info["page_array"]:
+            image_urls.append(base_url + page)
+
+        return image_urls
