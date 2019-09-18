@@ -63,7 +63,7 @@ class Chapter:
         self.destination_dir = destination_dir
         self.format = _format
         self._page_load_callback = page_load_callback
-        self._pages = []
+        self._pages = []  # type: List[str]
 
     @property
     def name(self) -> str:

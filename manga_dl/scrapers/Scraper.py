@@ -29,15 +29,15 @@ class Scraper:
 
     def __init__(
             self,
+            destination: str,
             _format: str = "cbz",
-            destination: Optional[str] = None,
             languages: Optional[Set[str]] = None
     ):
         """
         Initializes the Scraper object
-        :param _format: The format in which to store chapters
         :param destination: The destination directory in
                             which to store chapters
+        :param _format: The format in which to store chapters
         :param languages: Set of languages for which to check
         """
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -93,7 +93,7 @@ class Scraper:
         elif _id is not None:
             url = self.generate_url(_id)
 
-        chapters = self._load_chapters(url)
+        chapters = self._load_chapters(str(url))
 
         # Both sort steps are necessary!
         chapters.sort(

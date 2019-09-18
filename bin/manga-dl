@@ -38,7 +38,7 @@ def main(args: argparse.Namespace):
         for scraper_cls in scrapers:
             if scraper_cls.url_matches(args.url):
                 scraper = scraper_cls(
-                    _format=args.format, destination=args.out
+                    destination=args.out, _format=args.format
                 )
                 break
 
