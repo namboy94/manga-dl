@@ -75,7 +75,12 @@ class MangaDexScraper(Scraper):
 
         series_info = json.loads(resp.text)
         series_title = series_info["manga"]["title"]
-        chapter_list = series_info["chapter"]
+        chapter_list = series_info.get("chapter", {})
+
+        if self.destination is None:
+            destination = series_title
+        else:
+            destination = self.destination
 
         chapters = []
 
@@ -86,9 +91,10 @@ class MangaDexScraper(Scraper):
                 chapter["lang_code"],
                 series_title,
                 chapter["chapter"],
-                self.destination,
+                destination,
                 self.format,
-                self.get_image_pages
+                self.get_image_pages,
+                chapter["title"],
             ))
 
         return chapters

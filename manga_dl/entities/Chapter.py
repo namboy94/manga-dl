@@ -24,7 +24,7 @@ import cfscrape
 from puffotter.os import makedirs
 from typing import Callable, List
 from typing import Optional
-from subprocess import Popen
+from subprocess import Popen, DEVNULL
 from urllib.request import urlretrieve
 
 
@@ -41,7 +41,8 @@ class Chapter:
             chapter_number: str,
             destination_dir: str,
             _format: str,
-            page_load_callback: Callable[['Chapter', str], List[str]]
+            page_load_callback: Callable[['Chapter', str], List[str]],
+            title: Optional[str] = None
     ):
         """
         Initializes the manga chapter
@@ -53,6 +54,7 @@ class Chapter:
                                 downloaded files by default
         :param _format: The format in which to store the chapter when
                         downloading by default
+        :param title: The title of the chapter
         :param page_load_callback:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -64,13 +66,20 @@ class Chapter:
         self.format = _format
         self._page_load_callback = page_load_callback
         self._pages = []  # type: List[str]
+        self.title = title
+
+        if self.chapter_number == "":
+            self.chapter_number = "0"
 
     @property
     def name(self) -> str:
         """
         :return: The name of the chapter
         """
-        return "{} - Chapter {}".format(self.series_name, self.chapter_number)
+        name = "{} - Chapter {}".format(self.series_name, self.chapter_number)
+        if self.title is not None:
+            name += " - " + self.title
+        return name
 
     @property
     def pages(self) -> List[str]:
@@ -133,7 +142,9 @@ class Chapter:
             downloaded.append(image_file)
 
         if _format in ["cbz", "zip"]:
-            Popen(["zip", "-j", dest_path] + downloaded).wait()
+            self.logger.debug("Zipping Files")
+            Popen(["zip", "-j", dest_path] + downloaded,
+                  stdout=DEVNULL, stderr=DEVNULL).wait()
             shutil.rmtree(tempdir)
         elif _format == "dir":
             os.rename(tempdir, dest_path)
@@ -141,3 +152,9 @@ class Chapter:
             self.logger.warning("Invalid format {}".format(_format))
 
         return dest_path
+
+    def __str__(self) -> str:
+        """
+        :return: The string representation of the object
+        """
+        return self.name
