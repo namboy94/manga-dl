@@ -16,3 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
+
+
+sentry_dsn = "https://0c1dcd24a5c346e09115ffebdb780772@sentry.namibsun.net/9"
+"""
+Sentry DSN used for exception logging
+"""
