@@ -42,7 +42,8 @@ class Chapter:
             destination_dir: str,
             _format: str,
             page_load_callback: Callable[['Chapter', str], List[str]],
-            title: Optional[str] = None
+            title: Optional[str] = None,
+            group: Optional[str] = None
     ):
         """
         Initializes the manga chapter
@@ -55,6 +56,7 @@ class Chapter:
         :param _format: The format in which to store the chapter when
                         downloading by default
         :param title: The title of the chapter
+        :param group: The group that scanlated this chapter
         :param page_load_callback:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -66,10 +68,13 @@ class Chapter:
         self.format = _format
         self._page_load_callback = page_load_callback
         self._pages = []  # type: List[str]
+        self._additional_urls = []  # type: List[str]
+        self._last_additional_urls = []  # type: List[str]
+        self.group = group
         self.title = title
 
-        if self.chapter_number == "":
-            self.chapter_number = "0"
+        if self.chapter_number == "" or chapter_number == "0":
+            self.chapter_number = "0.0"
 
     @property
     def name(self) -> str:
@@ -77,8 +82,10 @@ class Chapter:
         :return: The name of the chapter
         """
         name = "{} - Chapter {}".format(self.series_name, self.chapter_number)
-        if self.title is not None:
+        if self.title is not None and self.title != "":
             name += " - " + self.title
+        if self.group is not None and self.group != "":
+            name += " ({})".format(self.group)
         return name
 
     @property
@@ -87,9 +94,71 @@ class Chapter:
         Lazy-loads the URLs of the chapter's page images
         :return: The list of page images, in the correct order
         """
-        if len(self._pages) == 0:
+        new_urls = self._last_additional_urls != self._additional_urls
+        if len(self._pages) == 0 or new_urls:
             self._pages = self._page_load_callback(self, self.url)
+            for url in self._additional_urls:
+                self._pages += self._page_load_callback(self, url)
+            self._last_additional_urls = list(self._additional_urls)
         return self._pages
+
+    @property
+    def macro_chapter(self) -> int:
+        """
+        Calculates the 'macro' chapter number. For example:
+            12 -> 12
+            15.5 -> 15
+            EX4 -> 4
+        :return: The macro chapter number
+        """
+        macro = self.chapter_number.split(".")[0]
+        macro_num = ""
+        for char in macro:
+            if char.isnumeric():
+                macro_num += char
+        return int(macro_num)
+
+    @property
+    def micro_chapter(self) -> int:
+        """
+        Calculates the 'micro' chapter number. For example:
+            12 -> 0
+            15.5 -> 5
+            EX4 -> 0
+        :return: The micro chapter number
+        """
+        try:
+            micro = self.chapter_number.split(".")[1]
+            micro_num = ""
+            for char in micro:
+                if char.isnumeric():
+                    micro_num += char
+            return int(micro_num)
+        except IndexError:
+            return 0
+
+    @property
+    def is_special(self) -> bool:
+        """
+        :return: Whether or not this is a 'special' chapter (Omake etc)
+        """
+        if "." in self.chapter_number or self.macro_chapter == 0:
+            return True
+        else:
+            try:
+                int(self.chapter_number)
+                return False
+            except ValueError:
+                return True
+
+    def add_additional_url(self, url: str):
+        """
+        Adds an additional URL.
+        Useful for multi-part chapters
+        :param url: The URL to add
+        :return: None
+        """
+        self._additional_urls.append(url)
 
     def download(
             self,
@@ -158,3 +227,14 @@ class Chapter:
         :return: The string representation of the object
         """
         return self.name
+
+    def __eq__(self, other: object) -> bool:
+        """
+        Checks for equality with other objects
+        :param other: The other object
+        :return: Whether or not the objects are  the same
+        """
+        if not isinstance(other, Chapter):
+            return False
+        else:
+            return other.url == self.url

@@ -95,6 +95,7 @@ class MangaDexScraper(Scraper):
                 self.format,
                 self.get_image_pages,
                 chapter["title"],
+                chapter["group_name"]
             ))
 
         return chapters
