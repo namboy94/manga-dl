@@ -18,7 +18,7 @@ along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import logging
-from typing import Optional, List, Set
+from typing import Optional, List, Set, Dict
 from manga_dl.entities.Chapter import Chapter
 
 
@@ -214,13 +214,13 @@ class Scraper:
         if len(chapters) < 2:
             return chapters
 
-        groups = {}
-        chapter_map = {}
+        groups = {}  # type: Dict[str, int]
+        chapter_map = {}  # type: Dict[str, List[Chapter]]
         for chapter in chapters:
             if chapter.group not in groups:
-                groups[chapter.group] = 1
+                groups[str(chapter.group)] = 1
             else:
-                groups[chapter.group] += 1
+                groups[str(chapter.group)] += 1
 
             if chapter.chapter_number not in chapter_map:
                 chapter_map[chapter.chapter_number] = []
@@ -228,7 +228,7 @@ class Scraper:
 
         for chapter_number, elements in chapter_map.items():
             if len(elements) > 1:
-                best = max(elements, key=lambda x: groups[x.group])
+                best = max(elements, key=lambda x: groups[str(x.group)])
                 chapter_map[chapter_number] = [best]
 
         deduplicated = []
