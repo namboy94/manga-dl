@@ -54,7 +54,10 @@ def main(args: argparse.Namespace):
         ))
 
     for c in chapters:
-        c.download()
+        if args.list:
+            print(c)
+        else:
+            c.download()
 
 
 if __name__ == "__main__":
@@ -72,6 +75,8 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--format",
                         choices={"cbz", "raw"}, default="cbz",
                         help="The format in which to store the chapters")
+    parser.add_argument("-l", "--list", action="store_true",
+                        help="Lists all found chapters")
 
     for _scraper_cls in scrapers:
         parser.add_argument("--{}-id".format(_scraper_cls.name()),
