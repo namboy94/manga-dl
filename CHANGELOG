@@ -1,3 +1,5 @@
+V 0.3.0:
+  - Various fixes to the mechanism that bundles chapters
 V 0.2.0:
   - Added mangadex support
   - Redid application structure
