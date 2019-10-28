@@ -21,11 +21,11 @@ import os
 import shutil
 import logging
 import cfscrape
+import requests
 from puffotter.os import makedirs
 from typing import Callable, List
 from typing import Optional
 from subprocess import Popen, DEVNULL
-from urllib.request import urlretrieve
 
 
 class Chapter:
@@ -207,18 +207,30 @@ class Chapter:
                 with open(image_file, "wb") as f:
                     f.write(content)
             else:
-                urlretrieve(image_url, image_file)
+                resp = requests.get(
+                    image_url, headers={"User-Agent": "Mozilla/5.0"}
+                )
+                if resp.status_code >= 300:
+                    self.logger.warning("Couldn't download image file {}"
+                                        .format(image_file))
+                else:
+                    with open(image_file, "wb") as f:
+                        f.write(resp.content)
+
             downloaded.append(image_file)
 
-        if _format in ["cbz", "zip"]:
-            self.logger.debug("Zipping Files")
-            Popen(["zip", "-j", dest_path] + downloaded,
-                  stdout=DEVNULL, stderr=DEVNULL).wait()
-            shutil.rmtree(tempdir)
-        elif _format == "dir":
-            os.rename(tempdir, dest_path)
+        if len(downloaded) == 0:
+            self.logger.warning("Couldn't download chapter {}".format(self))
         else:
-            self.logger.warning("Invalid format {}".format(_format))
+            if _format in ["cbz", "zip"]:
+                self.logger.debug("Zipping Files")
+                Popen(["zip", "-j", dest_path] + downloaded,
+                      stdout=DEVNULL, stderr=DEVNULL).wait()
+                shutil.rmtree(tempdir)
+            elif _format == "dir":
+                os.rename(tempdir, dest_path)
+            else:
+                self.logger.warning("Invalid format {}".format(_format))
 
         return dest_path
 
