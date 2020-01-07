@@ -23,6 +23,7 @@ import logging
 import cfscrape
 import requests
 from puffotter.os import makedirs
+from puffotter.print import pprint
 from typing import Callable, List
 from typing import Optional
 from subprocess import Popen, DEVNULL
@@ -187,6 +188,7 @@ class Chapter:
 
         index_fill = len(str(len(self.pages)))
         downloaded = []
+
         for i, image_url in enumerate(self.pages):
 
             cloudflare = False
@@ -198,8 +200,12 @@ class Chapter:
             filename = "{}.{}".format(str(i).zfill(index_fill), ext)
             image_file = os.path.join(tempdir, filename)
 
-            self.logger.info("Downloading image file {} to {}"
-                             .format(image_url, image_file))
+            pprint("{} Chapter {} ({}/{})".format(
+                self.series_name,
+                self.chapter_number,
+                i + 1,
+                len(self.pages)
+            ), fg="black", bg="lyellow", end="\r")
 
             if cloudflare:
                 scraper = cfscrape.create_scraper()
@@ -218,6 +224,8 @@ class Chapter:
                         f.write(resp.content)
 
             downloaded.append(image_file)
+
+        print()
 
         if len(downloaded) == 0:
             self.logger.warning("Couldn't download chapter {}".format(self))
