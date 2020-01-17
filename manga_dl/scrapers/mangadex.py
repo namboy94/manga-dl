@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with manga-dl.  If not, see <http://www.gnu.cc/licenses/>.
+along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import re
@@ -27,7 +27,7 @@ from manga_dl.scrapers.Scraper import Scraper
 
 class MangaDexScraper(Scraper):
     """
-    Scraper for mangadex.cc
+    Scraper for mangadex.org
     """
 
     @classmethod
@@ -44,7 +44,7 @@ class MangaDexScraper(Scraper):
         :param url: The URL to check
         :return: Whether the URL is valid
         """
-        return bool(re.match(r"^https://mangadex.cc/title/[0-9]+", url))
+        return bool(re.match(r"^https://mangadex.org/title/[0-9]+", url))
 
     def generate_url(self, _id: str) -> str:
         """
@@ -52,18 +52,18 @@ class MangaDexScraper(Scraper):
         :param _id: The ID to use
         :return: The generated URL
         """
-        return "https://mangadex.cc/title/" + _id
+        return "https://mangadex.org/title/" + _id
 
     def _load_chapters(self, url: str) -> List[Chapter]:
         """
-        Loads the chapters from mangadex.cc
+        Loads the chapters from mangadex.org
         :param url: The URL to scrape
         :return: The chapters found for the series
         """
         scraper = cfscrape.create_scraper()
 
-        mangadex_id = url.split("https://mangadex.cc/title/")[1].split("/")[0]
-        manga_url = "https://mangadex.cc/api/manga/" + str(mangadex_id)
+        mangadex_id = url.split("https://mangadex.org/title/")[1].split("/")[0]
+        manga_url = "https://mangadex.org/api/manga/" + str(mangadex_id)
 
         resp = scraper.get(manga_url)
 
@@ -85,7 +85,7 @@ class MangaDexScraper(Scraper):
         chapters = []
 
         for chapter_id, chapter in chapter_list.items():
-            chapter_url = "https://mangadex.cc/api/chapter/" + str(chapter_id)
+            chapter_url = "https://mangadex.org/api/chapter/" + str(chapter_id)
             chapters.append(Chapter(
                 chapter_url,
                 chapter["lang_code"],
@@ -123,7 +123,7 @@ class MangaDexScraper(Scraper):
 
         server = chapter_info["server"]
         if server == "/data/":
-            server = "CF!https://mangadex.cc/data/"  # Cloudflare protected
+            server = "CF!https://mangadex.org/data/"  # Cloudflare protected
 
         chapter_hash = chapter_info["hash"]
         base_url = server + chapter_hash + "/"
