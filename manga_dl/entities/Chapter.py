@@ -18,15 +18,16 @@ along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import os
+import time
 import shutil
 import logging
-import cfscrape
-import requests
+import random
 from puffotter.os import makedirs
 from puffotter.print import pprint
 from typing import Callable, List
 from typing import Optional
 from subprocess import Popen, DEVNULL
+from manga_dl.util.requests import download_image
 
 
 class Chapter:
@@ -175,7 +176,7 @@ class Chapter:
         """
         _format = self.format if format_override is None else format_override
 
-        tempdir = os.path.join("/tmp", self.name)
+        tempdir = os.path.join("/tmp", self.name[0:30])
         makedirs(tempdir, delete_before=True)
 
         dest_path = os.path.join(self.destination_dir, self.name)
@@ -207,25 +208,9 @@ class Chapter:
                 len(self.pages)
             ), fg="black", bg="lyellow", end="\r")
 
-            if cloudflare:
-                scraper = cfscrape.create_scraper()
-                content = scraper.get(image_url).content
-                with open(image_file, "wb") as f:
-                    f.write(content)
-            else:
-                resp = requests.get(
-                    image_url, headers={"User-Agent": "Mozilla/5.0"}
-                )
-                if resp.status_code >= 300:
-                    self.logger.warning("Couldn't download image file {}"
-                                        .format(image_file))
-                else:
-                    with open(image_file, "wb") as f:
-                        f.write(resp.content)
-
+            download_image(image_url, image_file, use_cfscrape=cloudflare)
             downloaded.append(image_file)
-
-        print()
+            time.sleep(random.randint(1, 2))
 
         if len(downloaded) == 0:
             self.logger.warning("Couldn't download chapter {}".format(self))
