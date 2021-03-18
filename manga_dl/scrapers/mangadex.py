@@ -63,19 +63,25 @@ class MangaDexScraper(Scraper):
         scraper = cfscrape.create_scraper()
 
         mangadex_id = url.split("https://mangadex.org/title/")[1].split("/")[0]
-        manga_url = "https://mangadex.org/api/manga/" + str(mangadex_id)
+        manga_url = f"https://api.mangadex.org/v2/manga/{mangadex_id}"
 
-        resp = scraper.get(manga_url)
+        series_resp = scraper.get(manga_url)
+        chapters_resp = scraper.get(manga_url + "/chapters")
 
-        if resp.status_code >= 300:
-            self.logger.warning("Unsuccessful request ({})"
-                                .format(resp.status_code))
-            self.logger.debug(resp.text)
+        if series_resp.status_code >= 300 or chapters_resp.status_code >= 300:
+            self.logger.warning(
+                f"Unsuccessful request ({series_resp.status_code} | "
+                f"{chapters_resp.status_code})"
+            )
+            self.logger.debug(series_resp.status_code)
+            self.logger.debug(chapters_resp.status_code)
             return []
 
-        series_info = json.loads(resp.text)
-        series_title = series_info["manga"]["title"]
-        chapter_list = series_info.get("chapter", {})
+        series_info = json.loads(series_resp.text)["data"]
+        chapters_info = json.loads(chapters_resp.text)["data"]
+        series_title = series_info["title"]
+        chapter_list = chapters_info["chapters"]
+        groups = {x["id"]: x["name"] for x in chapters_info["groups"]}
 
         if self.destination is None:
             destination = series_title
@@ -84,18 +90,19 @@ class MangaDexScraper(Scraper):
 
         chapters = []
 
-        for chapter_id, chapter in chapter_list.items():
-            chapter_url = "https://mangadex.org/api/chapter/" + str(chapter_id)
+        for chapter in chapter_list:
+            chapter_id = chapter["id"]
+            chapter_url = f"https://api.mangadex.org/v2/chapter/{chapter_id}"
             chapters.append(Chapter(
                 chapter_url,
-                chapter["lang_code"],
+                chapter["language"],
                 series_title,
                 chapter["chapter"],
                 destination,
                 self.format,
                 self.get_image_pages,
                 chapter["title"],
-                chapter["group_name"]
+                groups[chapter["groups"][0]]
             ))
 
         return chapters
@@ -118,7 +125,7 @@ class MangaDexScraper(Scraper):
             _self.logger.debug(resp.text)
             return []
 
-        chapter_info = json.loads(resp.text)
+        chapter_info = json.loads(resp.text)["data"]
         image_urls = []
 
         server = chapter_info["server"]
@@ -128,7 +135,7 @@ class MangaDexScraper(Scraper):
         chapter_hash = chapter_info["hash"]
         base_url = server + chapter_hash + "/"
 
-        for page in chapter_info["page_array"]:
+        for page in chapter_info["pages"]:
             image_urls.append(base_url + page)
 
         return image_urls
