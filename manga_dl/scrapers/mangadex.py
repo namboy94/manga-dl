@@ -98,10 +98,13 @@ class MangaDexScraper(Scraper):
 
             for result in data["results"]:
 
-                group = [
-                    x for x in result["relationships"]
-                    if x["type"] == "scanlation_group"
-                ][0]["id"]
+                try:
+                    group = [
+                        x for x in result["relationships"]
+                        if x["type"] == "scanlation_group"
+                    ][0]["id"]
+                except IndexError:
+                    group = "unknown"
 
                 chapters.append(Chapter(
                     url,
