@@ -106,11 +106,15 @@ class MangaDexScraper(Scraper):
                 except IndexError:
                     group = "unknown"
 
+                chapter_number = result["data"]["attributes"]["chapter"]
+                if chapter_number is None:
+                    chapter_number = "0"
+
                 chapters.append(Chapter(
                     "https://chapter/" + result["data"]["id"],
                     "en",
                     title,
-                    result["data"]["attributes"]["chapter"],
+                    chapter_number,
                     destination,
                     self.format,
                     self.get_image_pages,
