@@ -107,7 +107,7 @@ class MangaDexScraper(Scraper):
                     group = "unknown"
 
                 chapters.append(Chapter(
-                    url,
+                    "https://chapter/" + result["data"]["id"],
                     "en",
                     title,
                     result["data"]["attributes"]["chapter"],

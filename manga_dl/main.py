@@ -53,7 +53,6 @@ def main(args: argparse.Namespace):
         ))
 
     for c in chapters:
-        print(c)
         if args.list:
             print(c)
         else:

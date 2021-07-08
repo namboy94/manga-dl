@@ -218,9 +218,8 @@ class Scraper:
         chapter_map = {}  # type: Dict[str, List[Chapter]]
         for chapter in chapters:
             if chapter.group not in groups:
-                groups[str(chapter.group)] = 1
-            else:
-                groups[str(chapter.group)] += 1
+                groups[str(chapter.group)] = 0
+            groups[str(chapter.group)] += 1
 
             if chapter.chapter_number not in chapter_map:
                 chapter_map[chapter.chapter_number] = []
