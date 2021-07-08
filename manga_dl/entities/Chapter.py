@@ -24,7 +24,7 @@ import logging
 import random
 from puffotter.os import makedirs
 from puffotter.print import pprint
-from typing import Callable, List
+from typing import Callable, List, Dict, Any
 from typing import Optional
 from subprocess import Popen, DEVNULL
 from manga_dl.util.requests import download_image
@@ -45,7 +45,8 @@ class Chapter:
             _format: str,
             page_load_callback: Callable[['Chapter', str], List[str]],
             title: Optional[str] = None,
-            group: Optional[str] = None
+            group: Optional[str] = None,
+            extras: Optional[Dict[str, Any]] = None
     ):
         """
         Initializes the manga chapter
@@ -59,7 +60,8 @@ class Chapter:
                         downloading by default
         :param title: The title of the chapter
         :param group: The group that scanlated this chapter
-        :param page_load_callback:
+        :param page_load_callback: The callback used for downloading
+        :param extras: Any additional information that may be needed
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         self.url = url
@@ -74,6 +76,7 @@ class Chapter:
         self._last_additional_urls = []  # type: List[str]
         self.group = group
         self.title = title
+        self.extras = extras
 
         if self.chapter_number == "" or chapter_number == "0":
             self.chapter_number = "0.0"

@@ -20,11 +20,44 @@ along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import argparse
 from typing import List
-from manga_dl.main import main
 from manga_dl.scrapers import scrapers
 from manga_dl import sentry_dsn
 from manga_dl.entities.Chapter import Chapter
 from puffotter.init import cli_start, argparse_add_verbosity
+
+
+def main(args: argparse.Namespace):
+    """
+    The main script of the manga-dl program
+    :return: None
+    """
+    chapters = []  # type: List[Chapter]
+
+    if args.url is not None:
+        scraper = None
+        for scraper_cls in scrapers:
+            if scraper_cls.url_matches(args.url):
+                scraper = scraper_cls(
+                    destination=args.out, _format=args.format
+                )
+                break
+        chapters = scraper.load_chapters(args.url)
+
+    user_chapters = args.chapters
+    if user_chapters is not None:
+        chapter_numbers = user_chapters.split(",")
+        chapter_numbers = list(map(lambda x: x.strip(), chapter_numbers))
+        chapters = list(filter(
+            lambda x: x.chapter_number in chapter_numbers,
+            chapters
+        ))
+
+    for c in chapters:
+        print(c)
+        if args.list:
+            print(c)
+        else:
+            c.download()
 
 
 if __name__ == "__main__":

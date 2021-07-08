@@ -44,7 +44,7 @@ class Scraper:
         self.format = _format
         self.destination = destination
         if languages is None:
-            self.languages = {"english", "gb", "us"}
+            self.languages = {"english", "gb", "us", "en"}
         else:
             self.languages = languages
 

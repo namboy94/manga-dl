@@ -1,3 +1,5 @@
+V 0.4.0:
+  - Update to support new mangadex V5 API
 V 0.3.1:
   - Fixes the program crashing when attempting to download chapters that aren't available yet
 V 0.3.0:
