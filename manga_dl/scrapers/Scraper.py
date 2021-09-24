@@ -197,7 +197,7 @@ class Scraper:
 
         chapter.chapter_number = str(chapter.macro_chapter)
         for extra in to_combine:
-            chapter.add_additional_url(extra.url)
+            chapter.add_child_chapter(extra)
             combined_numbers.append(extra.chapter_number)
 
         self.logger.debug("Combined chapters: {}".format(combined_numbers))

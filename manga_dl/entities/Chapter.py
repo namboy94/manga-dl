@@ -46,7 +46,8 @@ class Chapter:
             page_load_callback: Callable[['Chapter', str], List[str]],
             title: Optional[str] = None,
             group: Optional[str] = None,
-            extras: Optional[Dict[str, Any]] = None
+            extras: Optional[Dict[str, Any]] = None,
+            children: Optional[List["Chapter"]] = None
     ):
         """
         Initializes the manga chapter
@@ -62,6 +63,7 @@ class Chapter:
         :param group: The group that scanlated this chapter
         :param page_load_callback: The callback used for downloading
         :param extras: Any additional information that may be needed
+        :param children: Any child chapters
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         self.url = url
@@ -72,11 +74,11 @@ class Chapter:
         self.format = _format
         self._page_load_callback = page_load_callback
         self._pages = []  # type: List[str]
-        self._additional_urls = []  # type: List[str]
-        self._last_additional_urls = []  # type: List[str]
+        self._page_load_chapters = []
         self.group = group
         self.title = title
         self.extras = extras
+        self.children = children if children is not None else []
 
         if self.chapter_number == "" or chapter_number == "0":
             self.chapter_number = "0.0"
@@ -99,12 +101,16 @@ class Chapter:
         Lazy-loads the URLs of the chapter's page images
         :return: The list of page images, in the correct order
         """
-        new_urls = self._last_additional_urls != self._additional_urls
-        if len(self._pages) == 0 or new_urls:
-            self._pages = self._page_load_callback(self, self.url)
-            for url in self._additional_urls:
-                self._pages += self._page_load_callback(self, url)
-            self._last_additional_urls = list(self._additional_urls)
+        to_load = [self] + self.children
+        if len(to_load) == len(self._page_load_chapters):
+            return self._pages
+        else:
+            self._page_load_chapters = to_load
+            self._pages = []
+            for chapter in to_load:
+                self._pages += chapter._page_load_callback(
+                    chapter, chapter.url
+                )
         return self._pages
 
     @property
@@ -156,14 +162,14 @@ class Chapter:
             except ValueError:
                 return True
 
-    def add_additional_url(self, url: str):
+    def add_child_chapter(self, child: "Chapter"):
         """
-        Adds an additional URL.
+        Adds a child chapter.
         Useful for multi-part chapters
-        :param url: The URL to add
+        :param child: The chapter to add as a child chapter
         :return: None
         """
-        self._additional_urls.append(url)
+        self.children.append(child)
 
     def download(
             self,

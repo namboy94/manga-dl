@@ -90,13 +90,13 @@ class MangaDexScraper(Scraper):
             }
             response = requests.get(url, params=params)
             data = json.loads(response.text)
-            result_count = len(data.get("results", []))
+            result_count = len(data.get("data", []))
             offset += result_count
 
             if result_count == 0:
                 break
 
-            for result in data["results"]:
+            for result in data["data"]:
 
                 try:
                     group = [
@@ -106,24 +106,24 @@ class MangaDexScraper(Scraper):
                 except IndexError:
                     group = "unknown"
 
-                chapter_number = result["data"]["attributes"]["chapter"]
+                chapter_number = result["attributes"]["chapter"]
                 if chapter_number is None:
                     chapter_number = "0"
 
                 chapters.append(Chapter(
-                    "https://chapter/" + result["data"]["id"],
+                    "https://chapter/" + result["id"],
                     "en",
                     title,
                     chapter_number,
                     destination,
                     self.format,
                     self.get_image_pages,
-                    result["data"]["attributes"]["title"],
+                    result["attributes"]["title"],
                     group,
                     {
-                        "id": result["data"]["id"],
-                        "files": result["data"]["attributes"]["data"],
-                        "hash": result["data"]["attributes"]["hash"]
+                        "id": result["id"],
+                        "files": result["attributes"]["data"],
+                        "hash": result["attributes"]["hash"]
                     }
                 ))
         self.logger.debug(f"Found {len(chapters)} chapters")
