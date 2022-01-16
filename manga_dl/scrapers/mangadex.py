@@ -70,7 +70,8 @@ class MangaDexScraper(Scraper):
         if title_info["result"] == "error":
             self.logger.warning(title_info["errors"])
             return []
-        title = title_info["data"]["attributes"]["title"]["en"]
+
+        title = list(title_info["data"]["attributes"]["title"].values())[0]
         self.logger.debug(f"Loading chapters for {title}")
 
         if self.destination is None:
@@ -122,8 +123,8 @@ class MangaDexScraper(Scraper):
                     group,
                     {
                         "id": result["id"],
-                        "files": result["attributes"]["data"],
-                        "hash": result["attributes"]["hash"]
+                        # "files": result["attributes"]["data"],
+                        # "hash": result["attributes"]["hash"]
                     }
                 ))
         self.logger.debug(f"Found {len(chapters)} chapters")
@@ -139,14 +140,14 @@ class MangaDexScraper(Scraper):
         :return: The page image URLs
         """
         chapter_id = _self.extras["id"]
-        chapter_hash = _self.extras["hash"]
-        pages = _self.extras["files"]
 
         at_home_url = f"https://api.mangadex.org/at-home/server/{chapter_id}"
-        server_url = json.loads(requests.get(at_home_url).text)["baseUrl"]
+        at_home_info = json.loads(requests.get(at_home_url).text)
+        server_url = at_home_info["baseUrl"]
+        chapter_hash = at_home_info["chapter"]["hash"]
 
         urls = [
             f"{server_url}/data/{chapter_hash}/{page}"
-            for page in pages
+            for page in at_home_info["chapter"]["data"]
         ]
         return urls
