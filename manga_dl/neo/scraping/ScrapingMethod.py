@@ -1,3 +1,5 @@
+import importlib
+import pkgutil
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -15,5 +17,15 @@ class ScrapingMethod(ABC):
         pass
 
     @abstractmethod
-    def get_volumes(self, series_id: str) -> List[MangaSeries]:
+    def get_series(self, series_id: str) -> MangaSeries:
         pass
+
+
+def get_scraping_methods() -> List[ScrapingMethod]:
+    import manga_dl.neo.scraping.methods as methods_module
+    modules = pkgutil.iter_modules(methods_module.__path__)
+
+    for module in modules:
+        importlib.import_module("manga_dl.neo.scraping.methods." + module.name)
+
+    return list(map(lambda subclass: subclass(), ScrapingMethod.__subclasses__()))
