@@ -44,3 +44,16 @@ class TestMangaDownloader:
         self.requester.download_file.assert_has_calls([call(page.image_file) for page in pages])
         self.bundler.bundle.assert_called_with(last_chapter_image_files, last_chapter_dest, series, last_chapter)
         assert (self.testing_path / series.name).is_dir()
+
+    def test_download_single_chapter(self):
+        series = TestDataFactory.build_series()
+        last_chapter = series.get_chapters()[-1]
+        last_chapter_image_files = [
+            DownloadedFile(self.dummy_bytes, page.get_filename())
+            for page in last_chapter.pages
+        ]
+
+        self.under_test.download_single_chapter(series, last_chapter, self.testing_path, self.file_type)
+
+        self.requester.download_file.assert_has_calls([call(page.image_file) for page in last_chapter.pages])
+        self.bundler.bundle.assert_called_with(last_chapter_image_files, self.testing_path, series, last_chapter)

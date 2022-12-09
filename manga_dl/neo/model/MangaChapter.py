@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
 from manga_dl.neo.model.MangaPage import MangaPage
@@ -25,3 +25,12 @@ class MangaChapter:
             filename = f"{filename}.{file_format.value}"
 
         return filename
+
+    def get_macro_micro_chapter(self) -> Tuple[int, int]:
+        after_decimal_point_decimal = self.number % 1
+        after_decimal_point = int("0" + str(after_decimal_point_decimal).replace(".", ""))
+        return int(self.number - after_decimal_point_decimal), int(after_decimal_point)
+
+    def is_special_chapter(self) -> bool:
+        macro, micro = self.get_macro_micro_chapter()
+        return macro == 0 or micro != 0

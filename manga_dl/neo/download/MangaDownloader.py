@@ -33,16 +33,21 @@ class MangaDownloader:
         for volume in series.volumes:
             self._download_volume(series, volume, series_dir, bundler)
 
+    def download_single_chapter(
+            self, series: MangaSeries, chapter: MangaChapter, target: Path, file_format: MangaFileFormat
+    ):
+        bundler = self._get_bundler(file_format)
+        self._download_chapter(series, chapter, target, bundler)
+
     def _download_volume(self, series: MangaSeries, volume: MangaVolume, target: Path, bundler: MangaBundler):
         for chapter in volume.chapters:
-            self._download_chapter(series, chapter, target, bundler)
+            chapter_file = target / chapter.get_filename(bundler.get_file_format())
+            self._download_chapter(series, chapter, chapter_file, bundler)
 
     def _download_chapter(self, series: MangaSeries, chapter: MangaChapter, target: Path, bundler: MangaBundler):
         self.logger.info(f"Downloading chapter {chapter.number}")
         page_data = self._download_pages([page for page in chapter.pages])
-        chapter_file = target / chapter.get_filename(bundler.get_file_format())
-
-        bundler.bundle(page_data, chapter_file, series, chapter)
+        bundler.bundle(page_data, target, series, chapter)
 
     def _download_pages(self, pages: List[MangaPage]) -> List[DownloadedFile]:
 
