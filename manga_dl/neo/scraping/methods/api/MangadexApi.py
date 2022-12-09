@@ -144,7 +144,11 @@ class MangadexApi:
 
         return title, author, artist
 
-    def _load_author_name(self, author_id: str) -> Optional[str]:
+    def _load_author_name(self, author_id: Optional[str]) -> Optional[str]:
+
+        if author_id is None:
+            return None
+
         author_info = self._call_api(f"author/{author_id}")
         return author_info["data"]["attributes"]["name"]
 

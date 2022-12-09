@@ -30,4 +30,4 @@ class ScrapingMethod(ABC):
         for module in modules:
             importlib.import_module("manga_dl.neo.scraping.methods." + module.name)
 
-        return list(map(lambda subclass: injector.get(subclass), ScrapingMethod.__subclasses__()))
+        return list(map(lambda subclass: injector.get(subclass), ScrapingMethod.__subclasses__()))  # type: ignore

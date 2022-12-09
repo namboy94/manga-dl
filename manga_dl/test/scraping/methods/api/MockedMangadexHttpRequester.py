@@ -8,11 +8,11 @@ from manga_dl.test.testutils.TestIdCreator import TestIdCreator
 
 
 class MockedMangadexHttpRequester(HttpRequester):
-    _series = []
+    _series: List[MangaSeries] = []
     _external_chapters = False
     _create_http_error = False
     _create_api_error = False
-    _endpoint_overrides = {}
+    _endpoint_overrides: Dict[str, Any] = {}
 
     def add_series(self, series: MangaSeries):
         self._series.append(series)
@@ -21,13 +21,15 @@ class MockedMangadexHttpRequester(HttpRequester):
         self._external_chapters = external_chapters
 
     def set_errors(self, http: bool, api: bool):
-        self._create_http_error = http,
+        self._create_http_error = http
         self._create_api_error = api
 
     def add_endpoint_override(self, endpoint: str, response: Optional[Dict[str, Any]]):
         self._endpoint_overrides[endpoint] = response
 
     def get_json(self, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+
+        params = {} if params is None else params
 
         if self._create_http_error:
             return None
@@ -44,7 +46,7 @@ class MockedMangadexHttpRequester(HttpRequester):
             return self._build_response(self._get_chapter_data(params))
 
         else:
-            static_responses = {}
+            static_responses: Dict[str, Any] = {}
             for series in self._series:
                 static_responses |= self._create_manga_endpoint_responses(series)
                 static_responses |= self._create_author_endpoint_responses(series.author)
@@ -97,7 +99,11 @@ class MockedMangadexHttpRequester(HttpRequester):
             })
         }
 
-    def _create_author_endpoint_responses(self, author: str) -> Dict[str, Any]:
+    def _create_author_endpoint_responses(self, author: Optional[str]) -> Dict[str, Any]:
+
+        if author is None:
+            return {}
+
         return {
             f"author/{TestIdCreator.create_author_id(author)}": self._wrap_in_data(
                 {"attributes": {"name": author}}

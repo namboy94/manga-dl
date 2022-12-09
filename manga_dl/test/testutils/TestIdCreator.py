@@ -1,3 +1,5 @@
+from typing import Optional
+
 from manga_dl.neo.model.MangaChapter import MangaChapter
 
 
@@ -8,5 +10,5 @@ class TestIdCreator:
         return str(hash(f"{chapter.number}+{chapter.title}"))
 
     @staticmethod
-    def create_author_id(name: str) -> str:
-        return str(hash(name))
+    def create_author_id(name: Optional[str]) -> str:
+        return str(hash(name if name is not None else "unknown"))

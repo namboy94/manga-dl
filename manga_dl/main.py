@@ -21,15 +21,15 @@ from typing import List
 
 from injector import Injector
 
-from manga_dl.neo.bundling.MangaBundler import get_bundlers, MangaBundler
+from manga_dl.neo.bundling.MangaBundler import MangaBundler
 from manga_dl.neo.cli.MangaDLCli import MangaDLCli
-from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod, get_scraping_methods
+from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod
 
 
 def main():
     injector = Injector()
-    injector.binder.multibind(List[ScrapingMethod], get_scraping_methods(injector))
-    injector.binder.multibind(List[MangaBundler], get_bundlers(injector))
+    injector.binder.multibind(List[ScrapingMethod], ScrapingMethod.get_scraping_methods(injector))
+    injector.binder.multibind(List[MangaBundler], MangaBundler.get_bundlers(injector))
     cli = injector.get(MangaDLCli)
     cli.run()
 

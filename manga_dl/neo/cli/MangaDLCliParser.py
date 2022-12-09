@@ -28,8 +28,8 @@ class MangaDLCliParser:
         self._parser.add_argument("-q", "--quiet", action="store_true",
                                   help="Disable all output")
 
-    def parse(self, args: List[str]) -> MangaDLCliOptions:
-        args = self._parser.parse_args(args)
+    def parse(self, cli_args: List[str]) -> MangaDLCliOptions:
+        args = self._parser.parse_args(cli_args)
         args.chapters = list(map(lambda chapter: Decimal(chapter), args.chapters))
         args.file_format = MangaFileFormat(args.file_format)
         args.out = Path(args.out)

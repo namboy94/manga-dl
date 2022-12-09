@@ -33,4 +33,4 @@ class MangaBundler(ABC):
         for module in modules:
             importlib.import_module("manga_dl.neo.bundling.impl." + module.name)
 
-        return list(map(lambda subclass: injector.get(subclass), MangaBundler.__subclasses__()))
+        return list(map(lambda subclass: injector.get(subclass), MangaBundler.__subclasses__()))  # type: ignore
