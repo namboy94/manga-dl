@@ -17,10 +17,12 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-import re
 import json
-import requests
+import re
 from typing import List
+
+import requests
+
 from manga_dl.entities.Chapter import Chapter
 from manga_dl.scrapers.Scraper import Scraper
 
@@ -91,7 +93,7 @@ class MangaDexScraper(Scraper):
             }
             response = requests.get(url, params=params)
             data = json.loads(response.text)
-            result_count = len(data.get("data", []))
+            result_count = len(data.get_json("data", []))
             offset += result_count
 
             if result_count == 0:

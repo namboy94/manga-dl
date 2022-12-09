@@ -45,9 +45,11 @@ class MangaDownloader:
         bundler.bundle(page_data, chapter_file, series, chapter)
 
     def _download_pages(self, pages: List[MangaPage]) -> List[DownloadedFile]:
-        return [
-            DownloadedFile(
-                data=self.requester.download_file(page.image_file),
-                filename=page.get_filename()
-            )
-            for page in pages]
+
+        downloaded = []
+        for page in pages:
+            page_data = self.requester.download_file(page.image_file)
+            page_data = b"Missing" if page_data is None else page_data
+            downloaded.append(DownloadedFile(page_data, page.get_filename()))
+
+        return downloaded

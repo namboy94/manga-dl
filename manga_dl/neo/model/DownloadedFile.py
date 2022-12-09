@@ -7,4 +7,6 @@ class DownloadedFile:
     filename: str
 
     def get_extension(self) -> str:
-        return self.filename.rsplit(".")[1]
+        if "." not in self.filename:
+            return ""
+        return self.filename.rsplit(".")[-1]

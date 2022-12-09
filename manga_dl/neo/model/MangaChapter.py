@@ -16,7 +16,12 @@ class MangaChapter:
     pages: List[MangaPage] = field(default_factory=list)
 
     def get_filename(self, file_format: MangaFileFormat) -> str:
-        filename = f"c{self.number}.{file_format.value}"
+        filename = f"c{self.number}-{self.title}"
+
         if self.volume is not None:
             filename = f"v{self.volume}{filename}"
+
+        if file_format != MangaFileFormat.DIR:
+            filename = f"{filename}.{file_format.value}"
+
         return filename

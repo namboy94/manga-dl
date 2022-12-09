@@ -14,8 +14,7 @@ class DirectoryBundler(MangaBundler):
         return MangaFileFormat.DIR
 
     def bundle(self, images: List[DownloadedFile], destination: Path, series: MangaSeries, chapter: MangaChapter):
-        series_dir = destination.parent / destination.name.rsplit(".", 1)[0]
-        series_dir.mkdir(parents=True, exist_ok=True)
+        destination.mkdir(parents=True, exist_ok=True)
         for image in images:
-            with open(series_dir / image.filename, "wb") as imagefile:
+            with open(destination / image.filename, "wb") as imagefile:
                 imagefile.write(image.data)

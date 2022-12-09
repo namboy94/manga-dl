@@ -11,9 +11,9 @@ from manga_dl.test.testutils.TestIdCreator import TestIdCreator
 class TestMangadexApi:
 
     def setup(self):
-        self.requester = MockedMangadexHttpRequester()
         self.dateconverter = DateConverter()
         self.timer = Mock(Timer)
+        self.requester = MockedMangadexHttpRequester(self.timer)
         self.under_test = MangadexApi(self.requester, self.dateconverter, self.timer)
 
         self.series = TestDataFactory.build_series()

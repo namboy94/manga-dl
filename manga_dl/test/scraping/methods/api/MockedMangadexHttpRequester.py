@@ -27,7 +27,7 @@ class MockedMangadexHttpRequester(HttpRequester):
     def add_endpoint_override(self, endpoint: str, response: Optional[Dict[str, Any]]):
         self._endpoint_overrides[endpoint] = response
 
-    def get(self, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    def get_json(self, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
 
         if self._create_http_error:
             return None

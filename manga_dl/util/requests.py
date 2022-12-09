@@ -18,9 +18,9 @@ along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import logging
-import requests
-import cfscrape
 
+import cfscrape
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def download_image(
         try:
             if use_cfscrape:
                 scraper = cfscrape.create_scraper()
-                resp = scraper.get(image_url)
+                resp = scraper.get_json(image_url)
             else:
                 resp = requests.get(
                     image_url,

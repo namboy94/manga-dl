@@ -1,0 +1,2 @@
+class TestMangaDLCliOptions:
+    pass

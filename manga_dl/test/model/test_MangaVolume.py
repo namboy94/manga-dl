@@ -1,0 +1,2 @@
+class TestMangaVolume:
+    pass
