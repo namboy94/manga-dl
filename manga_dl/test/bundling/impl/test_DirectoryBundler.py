@@ -15,6 +15,9 @@ class TestDirectoryBundler:
         if self.target.exists():
             shutil.rmtree(self.target)
 
+    def test_is_applicable(self):
+        assert self.under_test.is_applicable(MangaFileFormat.DIR) is True
+
     def test_get_file_format(self):
         assert self.under_test.get_file_format() == MangaFileFormat.DIR
 

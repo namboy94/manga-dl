@@ -18,6 +18,10 @@ class TestCBZBundler:
         if self.target.exists():
             self.target.unlink()
 
+    def test_is_applicable(self):
+        assert self.under_test.is_applicable(MangaFileFormat.CBZ) is True
+        assert self.under_test.is_applicable(MangaFileFormat.ZIP) is False
+
     def test_get_file_format(self):
         assert self.under_test.get_file_format() == MangaFileFormat.CBZ
 
