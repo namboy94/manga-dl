@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 from typing import List
 
@@ -26,8 +25,8 @@ class MangaDownloader:
         return next(filtered)
 
     def download(self, series: MangaSeries, target: Path, file_format: MangaFileFormat):
-        self._prepare_target_directory(target)
-
+        series_dir = target / series.name
+        series_dir.mkdir(parents=True, exist_ok=True)
         bundler = self._get_bundler(file_format)
         for volume in series.volumes:
             self._download_volume(series, volume, target, bundler)
@@ -49,19 +48,3 @@ class MangaDownloader:
                 filename=page.get_filename()
             )
             for page in pages]
-
-    def _prepare_target_directory(self, target: Path):
-        if target.exists():
-            do_continue = input(f"{target} already exists, delete it? (y/n)").lower() == "y"
-
-            if not do_continue:
-                print("Download aborted")
-                sys.exit(0)
-
-            if target.is_dir():
-                target.rmdir()
-
-            if target.is_file():
-                target.unlink()
-
-        target.mkdir()

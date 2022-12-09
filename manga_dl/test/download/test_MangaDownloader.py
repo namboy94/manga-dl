@@ -1,4 +1,5 @@
 import itertools
+import shutil
 from pathlib import Path
 from unittest.mock import Mock, call
 
@@ -24,7 +25,7 @@ class TestMangaDownloader:
         self.under_test = MangaDownloader(self.requester, [self.bundler])
 
         if self.testing_path.exists():
-            self.testing_path.rmdir()
+            shutil.rmtree(self.testing_path)
 
     def test_download(self):
         series = TestDataFactory.build_series()
@@ -41,3 +42,4 @@ class TestMangaDownloader:
 
         self.requester.download_file.assert_has_calls([call(page.image_file) for page in pages])
         self.bundler.bundle.assert_called_with(last_chapter_image_files, last_chapter_dest, series, last_chapter)
+        assert (self.testing_path / series.name).is_dir()
