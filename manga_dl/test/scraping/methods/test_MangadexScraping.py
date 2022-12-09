@@ -9,8 +9,12 @@ class TestMangadexScraping:
 
     def setup(self):
         self.manga_series = Mock(MangaSeries)
+        self.manga_series_no_pages = Mock(MangaSeries)
         self.mangadex_api = Mock(MangadexApi)
-        self.mangadex_api.get_series.side_effect = lambda series_id: {"123": self.manga_series}.get(series_id, None)
+
+        options = {"123": {True: self.manga_series, False: self.manga_series_no_pages}}
+        self.mangadex_api.get_series.side_effect = \
+            lambda series_id, load_pages: options.get(series_id, {}).get(load_pages, None)
         self.under_test = MangadexScraping(self.mangadex_api)
 
     def test_is_applicable(self):
@@ -27,7 +31,9 @@ class TestMangadexScraping:
     def test_get_series(self):
         existing = self.under_test.get_series("123")
         not_existing = self.under_test.get_series("abc")
+        no_pages = self.under_test.get_series("123", False)
 
         assert existing == self.manga_series
         assert not_existing is None
-        self.mangadex_api.get_series.assert_has_calls([call("123"), call("abc")])
+        assert no_pages == self.manga_series_no_pages
+        self.mangadex_api.get_series.assert_has_calls([call("123", True), call("abc", True), call("123", False)])

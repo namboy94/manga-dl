@@ -24,6 +24,12 @@ class TestMangadexApi:
 
         assert result == self.series
 
+    def test_get_series_no_pages(self):
+        result = self.under_test.get_series(self.series.id, False)
+
+        for chapter in result.get_chapters():
+            assert chapter.pages == []
+
     def test_get_series_only_external_links(self):
         self.requester.set_external_chapters(True)
 

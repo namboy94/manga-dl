@@ -24,12 +24,12 @@ class MangadexApi:
         self.http_requester = http_requester
         self.date_converter = date_converter
 
-    def get_series(self, series_id: str) -> Optional[MangaSeries]:
+    def get_series(self, series_id: str, load_pages: bool = True) -> Optional[MangaSeries]:
         self.logger.info(f"Loading data for series {series_id}")
         try:
             title, author, artist = self._load_series_info(series_id)
             self.logger.info(f"Found info: title={title}, author={author}, artist={artist}")
-            volumes = self._load_volumes(series_id)
+            volumes = self._load_volumes(series_id, load_pages)
             return MangaSeries(series_id, title, author, artist, volumes)
         except ValueError:
             return None
@@ -50,15 +50,15 @@ class MangadexApi:
         except ValueError:
             return None
 
-    def _load_volumes(self, series_id: str) -> List[MangaVolume]:
-        chapters = self._load_chapters(series_id)
+    def _load_volumes(self, series_id: str, load_pages: bool) -> List[MangaVolume]:
+        chapters = self._load_chapters(series_id, load_pages)
         grouped_by_volume = itertools.groupby(chapters, lambda chapter: chapter.volume)
         return [
             MangaVolume(volume_number=volume_number, chapters=list(chapters))
             for volume_number, chapters in grouped_by_volume
         ]
 
-    def _load_chapters(self, mangadex_id: str) -> List[MangaChapter]:
+    def _load_chapters(self, mangadex_id: str, load_pages: bool) -> List[MangaChapter]:
         chapters = []
 
         offset = 0
@@ -70,7 +70,7 @@ class MangadexApi:
             chapters_data = self._call_api("chapter", params).get("data", [])
             chapter_count = len(chapters_data)
 
-            chapters += self._parse_chapters(chapters_data)
+            chapters += self._parse_chapters(chapters_data, load_pages)
 
             offset += chapter_count
             end_reached = chapter_count == 0
@@ -86,14 +86,14 @@ class MangadexApi:
             "limit": 100
         }
 
-    def _parse_chapters(self, chapters_data: List[Dict[str, Any]]) -> List[MangaChapter]:
+    def _parse_chapters(self, chapters_data: List[Dict[str, Any]], load_pages: bool) -> List[MangaChapter]:
         all_chapters = [
-            self._parse_chapter(chapter_data)
+            self._parse_chapter(chapter_data, load_pages)
             for chapter_data in chapters_data
         ]
         return [x for x in all_chapters if x is not None]
 
-    def _parse_chapter(self, chapter_data: Dict[str, Any]) -> Optional[MangaChapter]:
+    def _parse_chapter(self, chapter_data: Dict[str, Any], load_pages: bool) -> Optional[MangaChapter]:
         attributes = chapter_data["attributes"]
         is_external = attributes["externalUrl"] is not None
 
@@ -107,7 +107,7 @@ class MangadexApi:
         chapter_number = Decimal("0" if raw_chapter_number is None else raw_chapter_number)
         volume_number = None if raw_volume_number is None else Decimal(raw_volume_number)
         created_at = self.date_converter.convert_to_datetime(attributes["createdAt"])
-        pages = self._load_pages(chapter_data["id"])
+        pages = [] if not load_pages else self._load_pages(chapter_data["id"])
 
         self.logger.info(f"Parsed chapter {raw_chapter_number}")
 

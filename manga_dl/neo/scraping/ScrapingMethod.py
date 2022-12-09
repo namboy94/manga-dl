@@ -19,7 +19,7 @@ class ScrapingMethod(ABC):
         pass
 
     @abstractmethod  # pragma: no cover
-    def get_series(self, series_id: str) -> Optional[MangaSeries]:
+    def get_series(self, series_id: str, load_pages: bool = True) -> Optional[MangaSeries]:
         pass
 
     @staticmethod

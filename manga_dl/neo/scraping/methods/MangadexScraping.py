@@ -22,5 +22,5 @@ class MangadexScraping(ScrapingMethod):
         except IndexError:
             return None
 
-    def get_series(self, series_id: str) -> Optional[MangaSeries]:
-        return self.mangadex_api.get_series(series_id)
+    def get_series(self, series_id: str, load_pages: bool = True) -> Optional[MangaSeries]:
+        return self.mangadex_api.get_series(series_id, load_pages)
