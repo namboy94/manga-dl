@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
-from manga_dl.neo.cli.MangaFileFormat import MangaFileFormat
+from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
 from manga_dl.neo.model.MangaPage import MangaPage
 
 

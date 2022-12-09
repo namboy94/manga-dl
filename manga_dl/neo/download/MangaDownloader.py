@@ -5,9 +5,9 @@ from typing import List
 from injector import inject
 
 from manga_dl.neo.bundling.MangaBundler import MangaBundler
-from manga_dl.neo.cli.MangaFileFormat import MangaFileFormat
-from manga_dl.neo.download.DownloadedFile import DownloadedFile
+from manga_dl.neo.model.DownloadedFile import DownloadedFile
 from manga_dl.neo.model.MangaChapter import MangaChapter
+from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
 from manga_dl.neo.model.MangaPage import MangaPage
 from manga_dl.neo.model.MangaSeries import MangaSeries
 from manga_dl.neo.model.MangaVolume import MangaVolume

@@ -11,15 +11,15 @@ from manga_dl.neo.model.MangaSeries import MangaSeries
 class ScrapingMethod(ABC):
 
     @abstractmethod
-    def is_applicable(self, series_url: str):
+    def is_applicable(self, series_url: str):  # pragma: no cover
         pass
 
     @abstractmethod
-    def parse_id(self, series_url: str) -> Optional[str]:
+    def parse_id(self, series_url: str) -> Optional[str]:  # pragma: no cover
         pass
 
     @abstractmethod
-    def get_series(self, series_id: str) -> Optional[MangaSeries]:
+    def get_series(self, series_id: str) -> Optional[MangaSeries]:  # pragma: no cover
         pass
 
 

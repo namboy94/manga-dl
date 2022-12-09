@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List
 
 from manga_dl.neo.cli.MangaDLCliOptions import MangaDLCliOptions
-from manga_dl.neo.cli.MangaFileFormat import MangaFileFormat
+from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
 
 
 class MangaDLCliParser:

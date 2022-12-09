@@ -5,7 +5,7 @@ import pytest
 
 from manga_dl.neo.cli.MangaDLCliOptions import MangaDLCliOptions
 from manga_dl.neo.cli.MangaDLCliParser import MangaDLCliParser
-from manga_dl.neo.cli.MangaFileFormat import MangaFileFormat
+from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
 
 
 class TestMangaDLCliParser:
