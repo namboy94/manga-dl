@@ -44,7 +44,8 @@ if __name__ == "__main__":
             "sentry-sdk",
             "puffotter",
             "cfscrape",
-            "injector"
+            "injector",
+            "lxml"
         ],
         tests_require=["pytest", "pytest-unordered"],
         include_package_data=True,

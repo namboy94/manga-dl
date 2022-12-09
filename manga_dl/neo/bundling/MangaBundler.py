@@ -1,6 +1,10 @@
+import importlib
+import pkgutil
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
+
+from injector import Injector
 
 from manga_dl.neo.model.DownloadedFile import DownloadedFile
 from manga_dl.neo.model.MangaChapter import MangaChapter
@@ -10,9 +14,8 @@ from manga_dl.neo.model.MangaSeries import MangaSeries
 
 class MangaBundler(ABC):
 
-    @abstractmethod
     def is_applicable(self, file_format: MangaFileFormat) -> bool:
-        pass
+        return self.get_file_format() == file_format
 
     @abstractmethod
     def get_file_format(self) -> MangaFileFormat:
@@ -21,3 +24,13 @@ class MangaBundler(ABC):
     @abstractmethod
     def bundle(self, images: List[DownloadedFile], destination: Path, series: MangaSeries, chapter: MangaChapter):
         pass
+
+
+def get_bundlers(injector: Injector) -> List[MangaBundler]:
+    import manga_dl.neo.bundling.impl as impl_module
+    modules = pkgutil.iter_modules(impl_module.__path__)
+
+    for module in modules:
+        importlib.import_module("manga_dl.neo.bundling.impl." + module.name)
+
+    return list(map(lambda subclass: injector.get(subclass), MangaBundler.__subclasses__()))

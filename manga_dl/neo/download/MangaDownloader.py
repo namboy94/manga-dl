@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import List
 
@@ -14,6 +15,7 @@ from manga_dl.neo.util.HttpRequester import HttpRequester
 
 
 class MangaDownloader:
+    logger = logging.getLogger("MangaDownloader")
 
     @inject
     def __init__(self, requester: HttpRequester, bundlers: List[MangaBundler]):
@@ -29,13 +31,14 @@ class MangaDownloader:
         series_dir.mkdir(parents=True, exist_ok=True)
         bundler = self._get_bundler(file_format)
         for volume in series.volumes:
-            self._download_volume(series, volume, target, bundler)
+            self._download_volume(series, volume, series_dir, bundler)
 
     def _download_volume(self, series: MangaSeries, volume: MangaVolume, target: Path, bundler: MangaBundler):
         for chapter in volume.chapters:
             self._download_chapter(series, chapter, target, bundler)
 
     def _download_chapter(self, series: MangaSeries, chapter: MangaChapter, target: Path, bundler: MangaBundler):
+        self.logger.info(f"Downloading chapter {chapter.number}")
         page_data = self._download_pages([page for page in chapter.pages])
         chapter_file = target / chapter.get_filename(bundler.get_file_format())
 

@@ -1,6 +1,7 @@
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List
 
+from manga_dl.neo.model.DownloadedFile import DownloadedFile
 from manga_dl.neo.model.MangaChapter import MangaChapter
 from manga_dl.neo.model.MangaPage import MangaPage
 from manga_dl.neo.model.MangaSeries import MangaSeries
@@ -29,3 +30,7 @@ class TestDataFactory:
             for i in range(0, page_count)
         ]
         return MangaChapter(title=title, number=dummy_chapter.number, volume=dummy_chapter.volume, pages=pages)
+
+    @staticmethod
+    def build_downloaded_files(chapter: MangaChapter) -> List[DownloadedFile]:
+        return [DownloadedFile(bytes(page.image_file, "utf8"), page.get_filename()) for page in chapter.pages]
