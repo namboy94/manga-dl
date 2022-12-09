@@ -19,6 +19,10 @@ class ScrapingService:
             return None
 
         series_id = scraping_method.parse_id(series_url)
+
+        if series_id is None:
+            return None
+
         return scraping_method.get_series(series_id)
 
     def _find_applicable_scraping_method(self, series_url: str) -> Optional[ScrapingMethod]:

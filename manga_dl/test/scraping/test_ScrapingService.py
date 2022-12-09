@@ -36,3 +36,17 @@ class TestScrapingService:
         self.scraping_method.get_series.assert_not_called()
 
         assert result is None
+
+    def test_scrape_invalid_id(self):
+        self.scraping_method.parse_id.side_effect = lambda x: None
+
+        result = self.under_test.scrape(self.url)
+
+        assert result is None
+
+    def test_scrape_scrape_result_is_none(self):
+        self.scraping_method.get_series.side_effect = lambda x: None
+
+        result = self.under_test.scrape(self.url)
+
+        assert result is None
