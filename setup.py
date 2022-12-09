@@ -46,7 +46,7 @@ if __name__ == "__main__":
             "cfscrape",
             "injector"
         ],
-        test_requires=["pytest"],
+        tests_require=["pytest", "pytest-unordered"],
         include_package_data=True,
         zip_safe=False
     )

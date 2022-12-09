@@ -17,15 +17,7 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from typing import List
-
-from injector import Injector
-
-from manga_dl.neo.cli.MangaDLCli import MangaDLCli
-from manga_dl.neo.scraping.ScrapingMethod import get_scraping_methods, ScrapingMethod
+from manga_dl.main import main
 
 if __name__ == "__main__":
-    injector = Injector()
-    injector.binder.multibind(List[ScrapingMethod], get_scraping_methods())
-    cli = injector.get(MangaDLCli)
-    cli.run()
+    main()

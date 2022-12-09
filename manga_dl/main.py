@@ -17,76 +17,20 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os
-import argparse
 from typing import List
-from manga_dl.scrapers import scrapers
-from manga_dl import sentry_dsn
-from manga_dl.entities.Chapter import Chapter
-from puffotter.init import cli_start, argparse_add_verbosity
+
+from injector import Injector
+
+from manga_dl.neo.cli.MangaDLCli import MangaDLCli
+from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod, get_scraping_methods
 
 
-def main(args: argparse.Namespace):
-    """
-    The main script of the manga-dl program
-    :return: None
-    """
-    chapters = []  # type: List[Chapter]
-
-    if args.url is not None:
-        scraper = None
-        for scraper_cls in scrapers:
-            if scraper_cls.url_matches(args.url):
-                scraper = scraper_cls(
-                    destination=args.out, _format=args.format
-                )
-                break
-        chapters = scraper.load_chapters(args.url)
-
-    user_chapters = args.chapters
-    if user_chapters is not None:
-        chapter_numbers = user_chapters.split(",")
-        chapter_numbers = list(map(lambda x: x.strip(), chapter_numbers))
-        chapters = list(filter(
-            lambda x: x.chapter_number in chapter_numbers,
-            chapters
-        ))
-
-    for c in chapters:
-        if args.list:
-            print(c)
-        else:
-            c.download()
+def main():
+    injector = Injector()
+    injector.binder.multibind(List[ScrapingMethod], get_scraping_methods(injector))
+    cli = injector.get(MangaDLCli)
+    cli.run()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("url", default=None,
-                        help="The URL from which to download. May be left "
-                             "blank if a specific ID for a connector was "
-                             "provided.")
-    parser.add_argument("-c", "--chapters",
-                        help="Specifies which chapters to download")
-    parser.add_argument("-o", "--out",
-                        default=os.path.join(os.path.expanduser("~"),
-                                             "Downloads/Manga"),
-                        help="Specifies the output path")
-    parser.add_argument("-f", "--format",
-                        choices={"cbz", "raw"}, default="cbz",
-                        help="The format in which to store the chapters")
-    parser.add_argument("-l", "--list", action="store_true",
-                        help="Lists all found chapters")
-
-    for _scraper_cls in scrapers:
-        parser.add_argument("--{}-id".format(_scraper_cls.name()),
-                            help="Uses specific {} ID instead of an URL"
-                            .format(_scraper_cls.name()))
-
-    argparse_add_verbosity(parser)
-    cli_start(
-        main,
-        parser,
-        "Thanks for using manga-dl!",
-        "manga-dl",
-        sentry_dsn
-    )
+    main()
