@@ -5,6 +5,7 @@ from typing import Optional, Dict, Any, List, Tuple
 
 from injector import inject
 
+from manga_dl.neo.model.DownloadedFile import DownloadedFile
 from manga_dl.neo.model.MangaChapter import MangaChapter
 from manga_dl.neo.model.MangaPage import MangaPage
 from manga_dl.neo.model.MangaSeries import MangaSeries
@@ -51,14 +52,18 @@ class MangadexApi:
             return None
 
     def _load_volumes(self, series_id: str, load_pages: bool) -> List[MangaVolume]:
-        chapters = self._load_chapters(series_id, load_pages)
+        volume_covers = self._load_volume_covers(series_id)
+        chapters = self._load_chapters(series_id, load_pages, volume_covers)
         grouped_by_volume = itertools.groupby(chapters, lambda chapter: chapter.volume)
+
         return [
-            MangaVolume(volume_number=volume_number, chapters=list(chapters))
+            MangaVolume(volume_number=volume_number, chapters=list(chapters), cover=volume_covers.get(volume_number))
             for volume_number, chapters in grouped_by_volume
         ]
 
-    def _load_chapters(self, mangadex_id: str, load_pages: bool) -> List[MangaChapter]:
+    def _load_chapters(
+            self, mangadex_id: str, load_pages: bool, volume_covers: Dict[Decimal, DownloadedFile]
+    ) -> List[MangaChapter]:
         chapters = []
 
         offset = 0
@@ -70,7 +75,7 @@ class MangadexApi:
             chapters_data = self._call_api("chapter", params).get("data", [])
             chapter_count = len(chapters_data)
 
-            chapters += self._parse_chapters(chapters_data, load_pages)
+            chapters += self._parse_chapters(chapters_data, load_pages, volume_covers)
 
             offset += chapter_count
             end_reached = chapter_count == 0
@@ -86,14 +91,18 @@ class MangadexApi:
             "limit": 100
         }
 
-    def _parse_chapters(self, chapters_data: List[Dict[str, Any]], load_pages: bool) -> List[MangaChapter]:
+    def _parse_chapters(
+            self, chapters_data: List[Dict[str, Any]], load_pages: bool, volume_covers: Dict[Decimal, DownloadedFile]
+    ) -> List[MangaChapter]:
         all_chapters = [
-            self._parse_chapter(chapter_data, load_pages)
+            self._parse_chapter(chapter_data, load_pages, volume_covers)
             for chapter_data in chapters_data
         ]
         return [x for x in all_chapters if x is not None]
 
-    def _parse_chapter(self, chapter_data: Dict[str, Any], load_pages: bool) -> Optional[MangaChapter]:
+    def _parse_chapter(
+            self, chapter_data: Dict[str, Any], load_pages: bool, volume_covers: Dict[Decimal, DownloadedFile]
+    ) -> Optional[MangaChapter]:
         attributes = chapter_data["attributes"]
         is_external = attributes["externalUrl"] is not None
 
@@ -116,7 +125,8 @@ class MangadexApi:
             number=chapter_number,
             volume=volume_number,
             published_at=created_at,
-            pages=pages
+            pages=pages,
+            cover=volume_covers.get(volume_number, None)
         )
 
     def _load_pages(self, chapter_id: str) -> List[MangaPage]:
@@ -155,3 +165,17 @@ class MangadexApi:
     @staticmethod
     def get_first_id_with_type_from_relations(relations: List[Dict[str, str]], key: str) -> Optional[str]:
         return next(filter(lambda x: x["type"] == key, relations), {"id": None})["id"]
+
+    def _load_volume_covers(self, mangadex_id: str) -> Dict[Decimal, DownloadedFile]:
+        cover_data = self._call_api("cover", {"manga[]": mangadex_id})
+        cover_filenames = {
+            cover_info["attributes"]["volume"]: cover_info["attributes"]["fileName"]
+            for cover_info in cover_data["data"]
+        }
+        return {
+            None if key is None else Decimal(key): DownloadedFile(
+                data=self.http_requester.download_file(f"https://uploads.mangadex.org/covers/{mangadex_id}/{filename}"),
+                filename=filename
+            )
+            for key, filename in cover_filenames.items()
+        }

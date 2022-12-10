@@ -3,6 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional, Tuple
 
+from manga_dl.neo.model.DownloadedFile import DownloadedFile
 from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
 from manga_dl.neo.model.MangaPage import MangaPage
 
@@ -14,6 +15,7 @@ class MangaChapter:
     volume: Optional[Decimal] = None
     published_at: datetime = datetime.utcfromtimestamp(0)
     pages: List[MangaPage] = field(default_factory=list)
+    cover: Optional[DownloadedFile] = None
 
     def get_filename(self, file_format: MangaFileFormat) -> str:
         filename = f"c{self.number}-{self.title}"

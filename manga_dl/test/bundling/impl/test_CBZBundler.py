@@ -34,12 +34,13 @@ class TestCBZBundler:
 
         assert self.target.is_file()
         with ZipFile(self.target) as cbzfile:
-            assert cbzfile.namelist() == unordered([image.filename for image in files] + ["ComicInfo.xml"])
+            expected_files = unordered([image.filename for image in files] + ["ComicInfo.xml", "0-cover.png"])
+            assert cbzfile.namelist() == expected_files
 
             xml = fromstring(cbzfile.read("ComicInfo.xml"))
             assert xml.find("Series").text == series.name
-            assert xml.find("Author").text == series.author
-            assert xml.find("Artist").text == series.artist
+            assert xml.find("Writer").text == series.author
+            assert xml.find("Inker").text == series.artist
             assert xml.find("Title").text == chapter.title
             assert xml.find("Number").text == str(chapter.number)
             assert xml.find("Volume").text == str(chapter.volume)

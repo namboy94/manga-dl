@@ -1,6 +1,7 @@
 import itertools
 from typing import Optional, Dict, Any, Union, List
 
+from manga_dl.neo.model.DownloadedFile import DownloadedFile
 from manga_dl.neo.model.MangaChapter import MangaChapter
 from manga_dl.neo.model.MangaSeries import MangaSeries
 from manga_dl.neo.util.HttpRequester import HttpRequester
@@ -13,6 +14,7 @@ class MockedMangadexHttpRequester(HttpRequester):
     _create_http_error = False
     _create_api_error = False
     _endpoint_overrides: Dict[str, Any] = {}
+    _file_cache: Dict[str, DownloadedFile] = {}
 
     def add_series(self, series: MangaSeries):
         self._series.append(series)
@@ -52,8 +54,12 @@ class MockedMangadexHttpRequester(HttpRequester):
                 static_responses |= self._create_author_endpoint_responses(series.author)
                 static_responses |= self._create_author_endpoint_responses(series.artist)
                 static_responses |= self._create_chapter_page_endpoint_responses(series)
+                static_responses |= self._create_volume_cover_endpoint_responses(series)
 
             return self._build_response(static_responses[endpoint])
+
+    def download_file(self, url: str) -> Optional[bytes]:
+        return self._file_cache.get(url.split("/")[-1], DownloadedFile(b"", "")).data
 
     @staticmethod
     def _build_response(data: Dict[str, Any], status: str = "success") -> Dict[str, Any]:
@@ -120,4 +126,16 @@ class MockedMangadexHttpRequester(HttpRequester):
                     "data": [f"{pagenumber}.png" for pagenumber in range(0, len(chapter.pages))]
                 }
             } for chapter in series.get_chapters()
+        }
+
+    def _create_volume_cover_endpoint_responses(self, series: MangaSeries):
+        self._file_cache = {volume.cover.filename: volume.cover for volume in series.volumes}
+        return {
+            "cover": self._wrap_in_data([
+                {"attributes": {
+                    "volume": None if volume.volume_number is None else str(volume.volume_number),
+                    "fileName": volume.cover.filename}
+                }
+                for volume in series.volumes
+            ])
         }
