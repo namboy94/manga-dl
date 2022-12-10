@@ -117,6 +117,10 @@ class MangadexApi:
         volume_number = None if raw_volume_number is None else Decimal(raw_volume_number)
         created_at = self.date_converter.convert_to_datetime(attributes["createdAt"])
         pages = [] if not load_pages else self._load_pages(chapter_data["id"])
+        cover = volume_covers.get(volume_number, None)
+
+        if cover is None and len(volume_covers) > 0:
+            cover = volume_covers[min(volume_covers.keys())]
 
         self.logger.info(f"Parsed chapter {raw_chapter_number}")
 
@@ -126,7 +130,7 @@ class MangadexApi:
             volume=volume_number,
             published_at=created_at,
             pages=pages,
-            cover=volume_covers.get(volume_number, None)
+            cover=cover
         )
 
     def _load_pages(self, chapter_id: str) -> List[MangaPage]:

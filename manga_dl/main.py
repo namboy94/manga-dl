@@ -21,7 +21,7 @@ from typing import List
 
 from injector import Injector
 
-from manga_dl.bundling import MangaBundler
+from manga_dl.bundling.MangaBundler import MangaBundler
 from manga_dl.cli.MangaDLCli import MangaDLCli
 from manga_dl.scraping.ScrapingMethod import ScrapingMethod
 

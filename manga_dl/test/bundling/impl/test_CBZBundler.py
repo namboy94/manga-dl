@@ -1,20 +1,25 @@
 import tempfile
 from pathlib import Path
-from xml.etree.ElementTree import fromstring
-from zipfile import ZipFile
-
-from pytest_unordered import unordered
+from unittest.mock import Mock
 
 from manga_dl.bundling.impl.CBZBundler import CBZBundler
 from manga_dl.model.MangaFileFormat import MangaFileFormat
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
+from manga_dl.util.ComicRackMetadataGenerator import ComicRackMetadataGenerator
+from manga_dl.util.CoverManipulator import CoverManipulator
 
 
 class TestCBZBundler:
 
     def setup(self):
         self.target = Path(tempfile.gettempdir()) / "cbzbundler.cbz"
-        self.under_test = CBZBundler()
+        self.comicrack = Mock(ComicRackMetadataGenerator)
+        self.cover_manipulator = Mock(CoverManipulator)
+
+        self.comicrack.create_metadata.return_value = "ComicRack XML"
+        self.cover_manipulator.add_chapter_box.side_effect = lambda in_bytes, _: in_bytes
+
+        self.under_test = CBZBundler(self.cover_manipulator, self.comicrack)
         if self.target.exists():
             self.target.unlink()
 
@@ -33,40 +38,6 @@ class TestCBZBundler:
         self.under_test.bundle(files, self.target, series, chapter)
 
         assert self.target.is_file()
-        with ZipFile(self.target) as cbzfile:
-            expected_files = unordered([image.filename for image in files] + ["ComicInfo.xml", "0-cover.png"])
-            assert cbzfile.namelist() == expected_files
 
-            xml = fromstring(cbzfile.read("ComicInfo.xml"))
-            assert xml.find("Series").text == series.name
-            assert xml.find("Writer").text == series.author
-            assert xml.find("Inker").text == series.artist
-            assert xml.find("Title").text == chapter.title
-            assert xml.find("Number").text == str(chapter.number)
-            assert xml.find("Volume").text == str(chapter.volume)
-
-    def test_bundle_no_volume(self):
-        series = TestDataFactory.build_series()
-        chapter = series.get_chapters()[0]
-        files = TestDataFactory.build_downloaded_files(chapter)
-        chapter.volume = None
-
-        self.under_test.bundle(files, self.target, series, chapter)
-
-        with ZipFile(self.target) as cbzfile:
-            xml = fromstring(cbzfile.read("ComicInfo.xml"))
-            assert xml.find("Volume") is None
-
-    def test_bundle_no_author_or_artist(self):
-        series = TestDataFactory.build_series()
-        chapter = series.get_chapters()[0]
-        files = TestDataFactory.build_downloaded_files(chapter)
-        series.artist = None
-        series.author = None
-
-        self.under_test.bundle(files, self.target, series, chapter)
-
-        with ZipFile(self.target) as cbzfile:
-            xml = fromstring(cbzfile.read("ComicInfo.xml"))
-            assert xml.find("Artist") is None
-            assert xml.find("Author") is None
+        self.comicrack.create_metadata.assert_called_once()
+        self.cover_manipulator.add_chapter_box.assert_called_once()

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from lxml import etree
+from injector import inject
 
 from manga_dl.bundling.MangaBundler import MangaBundler
 from manga_dl.bundling.impl.ZipBundler import ZipBundler
@@ -9,9 +9,16 @@ from manga_dl.model.DownloadedFile import DownloadedFile
 from manga_dl.model.MangaChapter import MangaChapter
 from manga_dl.model.MangaFileFormat import MangaFileFormat
 from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.util.ComicRackMetadataGenerator import ComicRackMetadataGenerator
+from manga_dl.util.CoverManipulator import CoverManipulator
 
 
 class CBZBundler(ZipBundler, MangaBundler):
+
+    @inject
+    def __init__(self, cover_manipulator: CoverManipulator, comicrack: ComicRackMetadataGenerator):
+        self.cover_manipulator = cover_manipulator
+        self.comicrack = comicrack
 
     def get_file_format(self) -> MangaFileFormat:
         return MangaFileFormat.CBZ
@@ -23,31 +30,8 @@ class CBZBundler(ZipBundler, MangaBundler):
         if chapter.cover is not None:
             extension = f".{chapter.cover.filename}".split(".")[-1]
             cover_file = f"0-cover.{extension}"
-            cbz_file.writestr(cover_file, chapter.cover.data)
+            cover_data = self.cover_manipulator.add_chapter_box(chapter.cover.data, f"Ch. {chapter.number}")
+            cbz_file.writestr(cover_file, cover_data)
 
-        cbz_file.writestr("ComicInfo.xml", self._create_metadata_file(series, chapter, cover_file))
+        cbz_file.writestr("ComicInfo.xml", self.comicrack.create_metadata(series, chapter, cover_file))
         cbz_file.close()
-
-    @staticmethod
-    def _create_metadata_file(series: MangaSeries, chapter: MangaChapter, cover_file: str) -> str:
-        comic_info = etree.Element("ComicInfo")
-        pages = etree.SubElement(comic_info, "Pages")
-
-        etree.SubElement(comic_info, "Title").text = chapter.title
-        etree.SubElement(comic_info, "Series").text = series.name
-        etree.SubElement(comic_info, "Number").text = str(chapter.number)
-
-        if series.author is not None:
-            etree.SubElement(comic_info, "Writer").text = series.author
-
-        if series.artist is not None:
-            etree.SubElement(comic_info, "Inker").text = series.artist
-
-        if chapter.volume is not None:
-            etree.SubElement(comic_info, "Volume").text = str(chapter.volume)
-
-        if cover_file is not None:
-            cover_element = etree.SubElement(pages, "Page")
-            cover_element.set("image", cover_file)
-
-        return etree.tostring(comic_info, pretty_print=True)

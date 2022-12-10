@@ -45,7 +45,9 @@ if __name__ == "__main__":
             "puffotter",
             "cfscrape",
             "injector",
-            "lxml"
+            "lxml",
+            "matplotlib",
+            "Pillow"
         ],
         tests_require=["pytest", "pytest-unordered"],
         include_package_data=True,
