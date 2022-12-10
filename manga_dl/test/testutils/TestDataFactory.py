@@ -1,11 +1,11 @@
 from decimal import Decimal
 from typing import Optional, List
 
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaPage import MangaPage
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.model.MangaVolume import MangaVolume
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaPage import MangaPage
+from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.model.MangaVolume import MangaVolume
 from manga_dl.test.testutils.TestIdCreator import TestIdCreator
 
 

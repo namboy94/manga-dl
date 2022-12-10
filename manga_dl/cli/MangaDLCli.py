@@ -3,11 +3,11 @@ import sys
 
 from injector import inject
 
-from manga_dl.neo.cli.MangaDLCliOptions import MangaDLCliOptions
-from manga_dl.neo.cli.MangaDLCliParser import MangaDLCliParser
-from manga_dl.neo.download.MangaDownloader import MangaDownloader
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.scraping.ScrapingService import ScrapingService
+from manga_dl.cli.MangaDLCliOptions import MangaDLCliOptions
+from manga_dl.cli.MangaDLCliParser import MangaDLCliParser
+from manga_dl.download.MangaDownloader import MangaDownloader
+from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.scraping.ScrapingService import ScrapingService
 
 
 class MangaDLCli:

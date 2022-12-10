@@ -1,11 +1,11 @@
 import itertools
 from typing import Optional, Dict, Any, Union, List
 
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.util.HttpRequester import HttpRequester
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaSeries import MangaSeries
 from manga_dl.test.testutils.TestIdCreator import TestIdCreator
+from manga_dl.util.HttpRequester import HttpRequester
 
 
 class MockedMangadexHttpRequester(HttpRequester):

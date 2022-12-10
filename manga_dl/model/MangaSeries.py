@@ -2,8 +2,8 @@ import itertools
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaVolume import MangaVolume
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaVolume import MangaVolume
 
 
 @dataclass

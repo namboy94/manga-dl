@@ -3,9 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from manga_dl.neo.cli.MangaDLCliOptions import MangaDLCliOptions
-from manga_dl.neo.cli.MangaDLCliParser import MangaDLCliParser
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
+from manga_dl.cli.MangaDLCliOptions import MangaDLCliOptions
+from manga_dl.cli.MangaDLCliParser import MangaDLCliParser
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 
 
 class TestMangaDLCliParser:

@@ -2,9 +2,9 @@ from typing import Optional
 
 from injector import inject
 
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod
-from manga_dl.neo.scraping.methods.api.MangadexApi import MangadexApi
+from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.scraping.ScrapingMethod import ScrapingMethod
+from manga_dl.scraping.methods.api.MangadexApi import MangadexApi
 
 
 class MangadexScraping(ScrapingMethod):

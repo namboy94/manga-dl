@@ -3,9 +3,9 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional, Tuple
 
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
-from manga_dl.neo.model.MangaPage import MangaPage
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaFileFormat import MangaFileFormat
+from manga_dl.model.MangaPage import MangaPage
 
 
 @dataclass

@@ -3,8 +3,8 @@ from decimal import Decimal
 from pathlib import Path
 from typing import List
 
-from manga_dl.neo.cli.MangaDLCliOptions import MangaDLCliOptions
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
+from manga_dl.cli.MangaDLCliOptions import MangaDLCliOptions
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 
 
 class MangaDLCliParser:

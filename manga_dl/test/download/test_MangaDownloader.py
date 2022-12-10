@@ -4,12 +4,12 @@ import tempfile
 from pathlib import Path
 from unittest.mock import Mock, call
 
-from manga_dl.neo.bundling.MangaBundler import MangaBundler
-from manga_dl.neo.download.MangaDownloader import MangaDownloader
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
-from manga_dl.neo.util.HttpRequester import HttpRequester
+from manga_dl.bundling.MangaBundler import MangaBundler
+from manga_dl.download.MangaDownloader import MangaDownloader
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
+from manga_dl.util.HttpRequester import HttpRequester
 
 
 class TestMangaDownloader:

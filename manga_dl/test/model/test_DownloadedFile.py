@@ -1,4 +1,4 @@
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
+from manga_dl.model.DownloadedFile import DownloadedFile
 
 
 class TestDownloadedFile:

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from manga_dl.neo.util.DateConverter import DateConverter
+from manga_dl.util.DateConverter import DateConverter
 
 
 class TestDateConverter:

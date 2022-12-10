@@ -6,10 +6,10 @@ from typing import List
 
 from injector import Injector
 
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
-from manga_dl.neo.model.MangaSeries import MangaSeries
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaFileFormat import MangaFileFormat
+from manga_dl.model.MangaSeries import MangaSeries
 
 
 class MangaBundler(ABC):
@@ -27,10 +27,10 @@ class MangaBundler(ABC):
 
     @staticmethod
     def get_bundlers(injector: Injector) -> List["MangaBundler"]:
-        import manga_dl.neo.bundling.impl as impl_module
+        import manga_dl.bundling.impl as impl_module
         modules = pkgutil.iter_modules(impl_module.__path__)
 
         for module in modules:
-            importlib.import_module("manga_dl.neo.bundling.impl." + module.name)
+            importlib.import_module("manga_dl.bundling.impl." + module.name)
 
         return list(map(lambda subclass: injector.get(subclass), MangaBundler.__subclasses__()))  # type: ignore

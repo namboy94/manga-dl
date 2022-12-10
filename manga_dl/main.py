@@ -21,9 +21,9 @@ from typing import List
 
 from injector import Injector
 
-from manga_dl.neo.bundling.MangaBundler import MangaBundler
-from manga_dl.neo.cli.MangaDLCli import MangaDLCli
-from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod
+from manga_dl.bundling import MangaBundler
+from manga_dl.cli.MangaDLCli import MangaDLCli
+from manga_dl.scraping.ScrapingMethod import ScrapingMethod
 
 
 def main():

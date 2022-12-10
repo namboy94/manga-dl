@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import List, Optional
 
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaChapter import MangaChapter
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaChapter import MangaChapter
 
 
 @dataclass

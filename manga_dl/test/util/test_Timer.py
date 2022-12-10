@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from manga_dl.neo.util.Timer import Timer
+from manga_dl.util.Timer import Timer
 
 
 class TestTimer:

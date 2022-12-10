@@ -2,9 +2,9 @@ from decimal import Decimal
 
 from pytest_unordered import unordered
 
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.model.MangaVolume import MangaVolume
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.model.MangaVolume import MangaVolume
 
 
 class TestMangaSeries:

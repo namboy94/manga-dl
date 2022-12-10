@@ -1,6 +1,6 @@
 from typing import Optional
 
-from manga_dl.neo.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaChapter import MangaChapter
 
 
 class TestIdCreator:

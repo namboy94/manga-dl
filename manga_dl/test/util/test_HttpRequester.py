@@ -4,8 +4,8 @@ from unittest.mock import patch, Mock
 
 from requests import Response
 
-from manga_dl.neo.util.HttpRequester import HttpRequester
-from manga_dl.neo.util.Timer import Timer
+from manga_dl.util.HttpRequester import HttpRequester
+from manga_dl.util.Timer import Timer
 
 
 class TestHttpRequester:

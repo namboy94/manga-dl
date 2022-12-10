@@ -1,4 +1,4 @@
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 
 
 class TestMangaFileFormat:

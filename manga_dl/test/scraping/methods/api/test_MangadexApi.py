@@ -1,8 +1,8 @@
 from unittest.mock import Mock
 
-from manga_dl.neo.scraping.methods.api.MangadexApi import MangadexApi
-from manga_dl.neo.util.DateConverter import DateConverter
-from manga_dl.neo.util.Timer import Timer
+from manga_dl.scraping.methods.api.MangadexApi import MangadexApi
+from manga_dl.util.DateConverter import DateConverter
+from manga_dl.util.Timer import Timer
 from manga_dl.test.scraping.methods.api.MockedMangadexHttpRequester import MockedMangadexHttpRequester
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
 from manga_dl.test.testutils.TestIdCreator import TestIdCreator

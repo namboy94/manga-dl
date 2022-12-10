@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 
 
 class TestMangaChapter:

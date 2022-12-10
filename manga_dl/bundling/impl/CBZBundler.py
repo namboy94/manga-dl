@@ -3,12 +3,12 @@ from typing import List
 
 from lxml import etree
 
-from manga_dl.neo.bundling.MangaBundler import MangaBundler
-from manga_dl.neo.bundling.impl.ZipBundler import ZipBundler
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
-from manga_dl.neo.model.MangaSeries import MangaSeries
+from manga_dl.bundling.MangaBundler import MangaBundler
+from manga_dl.bundling.impl.ZipBundler import ZipBundler
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaFileFormat import MangaFileFormat
+from manga_dl.model.MangaSeries import MangaSeries
 
 
 class CBZBundler(ZipBundler, MangaBundler):

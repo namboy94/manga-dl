@@ -1,4 +1,4 @@
-from manga_dl.neo.model.MangaPage import MangaPage
+from manga_dl.model.MangaPage import MangaPage
 
 
 class TestMangaPage:

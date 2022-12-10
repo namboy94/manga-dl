@@ -1,8 +1,8 @@
 from unittest.mock import Mock
 
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod
-from manga_dl.neo.scraping.ScrapingService import ScrapingService
+from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.scraping.ScrapingMethod import ScrapingMethod
+from manga_dl.scraping.ScrapingService import ScrapingService
 
 
 class TestScrapingService:

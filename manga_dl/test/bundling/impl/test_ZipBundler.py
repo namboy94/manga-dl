@@ -4,8 +4,8 @@ from zipfile import ZipFile
 
 from pytest_unordered import unordered
 
-from manga_dl.neo.bundling.impl.ZipBundler import ZipBundler
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
+from manga_dl.bundling.impl.ZipBundler import ZipBundler
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
 
 

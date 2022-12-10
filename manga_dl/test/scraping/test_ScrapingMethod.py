@@ -1,6 +1,6 @@
 from injector import Injector
 
-from manga_dl.neo.scraping.ScrapingMethod import ScrapingMethod
+from manga_dl.scraping.ScrapingMethod import ScrapingMethod
 
 
 class TestScrapingMethod:

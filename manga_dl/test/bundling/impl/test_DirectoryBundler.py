@@ -2,8 +2,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from manga_dl.neo.bundling.impl.DirectoryBundler import DirectoryBundler
-from manga_dl.neo.model.MangaFileFormat import MangaFileFormat
+from manga_dl.bundling.impl.DirectoryBundler import DirectoryBundler
+from manga_dl.model.MangaFileFormat import MangaFileFormat
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
 
 

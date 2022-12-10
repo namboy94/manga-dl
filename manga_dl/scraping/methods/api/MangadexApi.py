@@ -5,14 +5,14 @@ from typing import Optional, Dict, Any, List, Tuple
 
 from injector import inject
 
-from manga_dl.neo.model.DownloadedFile import DownloadedFile
-from manga_dl.neo.model.MangaChapter import MangaChapter
-from manga_dl.neo.model.MangaPage import MangaPage
-from manga_dl.neo.model.MangaSeries import MangaSeries
-from manga_dl.neo.model.MangaVolume import MangaVolume
-from manga_dl.neo.util.DateConverter import DateConverter
-from manga_dl.neo.util.HttpRequester import HttpRequester
-from manga_dl.neo.util.Timer import Timer
+from manga_dl.model.DownloadedFile import DownloadedFile
+from manga_dl.model.MangaChapter import MangaChapter
+from manga_dl.model.MangaPage import MangaPage
+from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.model.MangaVolume import MangaVolume
+from manga_dl.util.DateConverter import DateConverter
+from manga_dl.util.HttpRequester import HttpRequester
+from manga_dl.util.Timer import Timer
 
 
 class MangadexApi:
