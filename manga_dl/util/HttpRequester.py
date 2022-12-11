@@ -28,7 +28,12 @@ class HttpRequester:
         return response if response is None else response.content
 
     def _handle_request(self, request_generator: Callable[[], Response]) -> Optional[Response]:
-        response = request_generator()
+
+        try:
+            response = request_generator()
+        except ConnectionError:
+            response = Response()
+            response.status_code = 429
 
         if response.status_code == 429:
             self.logger.warning("Rate limited, retrying in 60 seconds")

@@ -1,11 +1,12 @@
 from unittest.mock import Mock
 
+from manga_dl.model.MangaSeries import MangaSeries
 from manga_dl.scraping.methods.api.MangadexApi import MangadexApi
-from manga_dl.util.DateConverter import DateConverter
-from manga_dl.util.Timer import Timer
 from manga_dl.test.scraping.methods.api.MockedMangadexHttpRequester import MockedMangadexHttpRequester
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
 from manga_dl.test.testutils.TestIdCreator import TestIdCreator
+from manga_dl.util.DateConverter import DateConverter
+from manga_dl.util.Timer import Timer
 
 
 class TestMangadexApi:
@@ -58,3 +59,23 @@ class TestMangadexApi:
         result = self.under_test.get_series(self.series.id)
 
         assert result.volumes[0].chapters[0].pages == []
+
+    def test_get_series_no_author_info_found(self):
+        series = MangaSeries(id="100", name="100", author=None, artist=None)
+        self.requester.add_series(series)
+
+        result = self.under_test.get_series(series.id)
+
+        assert result.author is None
+        assert result.artist is None
+
+    def test_get_series_use_default_cover(self):
+        self.series.volumes[0].cover = None
+
+        result = self.under_test.get_series(self.series.id)
+
+        assert result.volumes[0].cover is not None
+        assert result.volumes[0].cover == self.series.volumes[1].cover
+
+        for chapter in result.volumes[0].chapters:
+            assert chapter.cover == self.series.volumes[1].cover

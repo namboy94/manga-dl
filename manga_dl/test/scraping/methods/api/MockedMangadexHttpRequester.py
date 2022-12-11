@@ -129,13 +129,20 @@ class MockedMangadexHttpRequester(HttpRequester):
         }
 
     def _create_volume_cover_endpoint_responses(self, series: MangaSeries):
-        self._file_cache = {volume.cover.filename: volume.cover for volume in series.volumes}
+        self._file_cache = {
+            volume.cover.filename: volume.cover
+            for volume in series.volumes
+            if volume.cover is not None
+        }
         return {
             "cover": self._wrap_in_data([
-                {"attributes": {
-                    "volume": None if volume.volume_number is None else str(volume.volume_number),
-                    "fileName": volume.cover.filename}
+                {
+                    "attributes": {
+                        "volume": None if volume.volume_number is None else str(volume.volume_number),
+                        "fileName": volume.cover.filename
+                    }
                 }
                 for volume in series.volumes
+                if volume.cover is not None
             ])
         }

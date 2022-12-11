@@ -10,5 +10,5 @@ class TestIdCreator:
         return str(hash(f"{chapter.number}+{chapter.title}"))
 
     @staticmethod
-    def create_author_id(name: Optional[str]) -> str:
-        return str(hash(name if name is not None else "unknown"))
+    def create_author_id(name: Optional[str]) -> Optional[str]:
+        return None if name is None else str(hash(name))

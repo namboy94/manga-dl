@@ -39,6 +39,23 @@ class TestHttpRequester:
             self.timer.sleep.called_with(60)
             self.timer.sleep.assert_called_once()
 
+    def test_get_connection_error_retry_success(self):
+        counter = {"count": 0}
+        
+        def get_mock(*_, **__):
+            if counter["count"] == 0:
+                counter["count"] += 1
+                raise ConnectionError()
+            return self._create_json_response(expected, 200)
+
+        with patch("requests.get") as get:
+            expected = {"hello": "world"}
+            get.side_effect = get_mock
+
+            assert self.under_test.get_json("example.com") == expected
+            self.timer.sleep.called_with(60)
+            self.timer.sleep.assert_called_once()
+
     def test_get_rate_limited_retry_failure(self):
         with patch("requests.get") as get:
             get.side_effect = [self._create_json_response({}, 429),
