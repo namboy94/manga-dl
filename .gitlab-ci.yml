@@ -54,11 +54,14 @@ unittest:
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     when: always
+    paths:
+      - coverage.xml
     reports:
       junit: report.xml
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
+    expire_in: 1 week
 
 pypi_upload:
   image: python:3.10
