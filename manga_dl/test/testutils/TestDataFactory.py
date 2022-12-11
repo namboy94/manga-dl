@@ -1,5 +1,6 @@
+from datetime import datetime
 from decimal import Decimal
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from manga_dl.model.DownloadedFile import DownloadedFile
 from manga_dl.model.MangaChapter import MangaChapter
@@ -24,7 +25,13 @@ class TestDataFactory:
         return MangaSeries(id="123", name="TestManga", author="TestAuthor", artist="TestArtist", volumes=volumes)
 
     @staticmethod
-    def build_chapter(title: str, number: float, page_count: int, volume: Optional[float] = None) -> MangaChapter:
+    def build_chapter(
+            title: str,
+            number: Union[float, str, int],
+            page_count: int = 10,
+            volume: Optional[float] = None,
+            published_at: str = "2020-01-01"
+    ) -> MangaChapter:
         decimal_volume = None if volume is None else Decimal(volume)
         dummy_chapter = MangaChapter(title=title, number=Decimal(number), volume=decimal_volume)
         chapter_id = TestIdCreator.create_chapter_id(dummy_chapter)
@@ -37,7 +44,8 @@ class TestDataFactory:
             number=dummy_chapter.number,
             volume=dummy_chapter.volume,
             pages=pages,
-            cover=DownloadedFile(b"CoverImage", "cover.png")
+            cover=DownloadedFile(b"CoverImage", "cover.png"),
+            published_at=datetime.strptime(published_at, "%Y-%m-%d")
         )
 
     @staticmethod
