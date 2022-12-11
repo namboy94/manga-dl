@@ -20,11 +20,11 @@ github_mirror:
     - git config --add --local core.sshCommand 'ssh -i id_rsa -o UserKnownHostsFile=known_hosts'
   script:
     - git fetch
-    - git pull origin master
-    - git pull origin develop
-    - git checkout origin/master
+    - git checkout master
+    - git pull
     - git push -f git@github.com:namboy94/manga-dl.git master
-    - git checkout origin/develop
+    - git checkout develop
+    - git pull
     - git push -f git@github.com:namboy94/manga-dl.git develop
 
 stylecheck:
@@ -49,7 +49,7 @@ unittest:
   tags: [ docker ]
   script:
     - pip install -r requirements.txt
-    - pytest manga_dl
+    - python -m pytest
 
 #pypi_upload:
 #  stage: release
