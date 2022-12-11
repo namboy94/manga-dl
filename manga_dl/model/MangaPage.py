@@ -7,4 +7,4 @@ class MangaPage:
     page_number: int
 
     def get_filename(self) -> str:
-        return self.image_file.split("/")[-1]
+        return f"{str(self.page_number).zfill(4)}-{self.image_file.split('/')[-1]}"

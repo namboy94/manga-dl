@@ -52,7 +52,7 @@ class MangaDownloader:
     def _download_pages(self, pages: List[MangaPage]) -> List[DownloadedFile]:
 
         downloaded = []
-        for page in pages:
+        for i, page in enumerate(pages):
             page_data = self.requester.download_file(page.image_file)
             page_data = b"Missing" if page_data is None else page_data
             downloaded.append(DownloadedFile(page_data, page.get_filename()))

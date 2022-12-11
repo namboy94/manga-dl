@@ -157,11 +157,11 @@ class MangadexApi:
         server_url = at_home_info["baseUrl"]
         chapter_hash = at_home_info["chapter"]["hash"]
 
-        urls = [
+        pages = [
             MangaPage(image_file=f"{server_url}/data/{chapter_hash}/{page}", page_number=i + 1)
             for i, page in enumerate(at_home_info["chapter"]["data"])
         ]
-        return urls
+        return pages
 
     def _load_series_info(self, series_id: str) -> Tuple[str, Optional[str], Optional[str]]:
         title_info = self._call_api(f"manga/{series_id}")
