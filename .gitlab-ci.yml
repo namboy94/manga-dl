@@ -48,11 +48,17 @@ unittest:
   tags: [ docker ]
   script:
     - pip install . -r requirements.txt
-    - python -m pytest --junitxml=report.xml
+    - coverage run -m pytest --junitxml=report.xml
+    - coverage report
+    - coverage xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     when: always
     reports:
       junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 pypi_upload:
   image: python:3.10
