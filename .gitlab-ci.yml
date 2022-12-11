@@ -18,7 +18,8 @@ github_mirror:
     - chmod 0600 ~/.ssh/id_rsa
   script:
     - git fetch
-    - git pull
+    - git pull origin master
+    - git pull origin develop
     - git checkout origin/master
     - git push -f git@github.com:namboy94/manga-dl.git master
     - git checkout origin/develop
