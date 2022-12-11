@@ -17,7 +17,7 @@ github_mirror:
     - echo "$GITHUB_SSH_KEY" > id_rsa
     - chmod 0600 id_rsa
     - ssh-keyscan -H github.com > known_hosts
-    - git config --add --local core.sshCommand 'ssh -i id_rsa -o known_hosts'
+    - git config --add --local core.sshCommand 'ssh -i id_rsa -o UserKnownHostsFile=known_hosts'
   script:
     - git fetch
     - git pull origin master
@@ -49,6 +49,7 @@ unittest:
   tags: [ docker ]
   script:
     - pip install pytest
+    - python setup.py install
     - pytest manga_dl
 
 #unittest:
