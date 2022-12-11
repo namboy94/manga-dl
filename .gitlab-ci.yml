@@ -49,6 +49,7 @@ unittest:
   tags: [ docker ]
   script:
     - pip install -r requirements.txt
+    - python setup.py install
     - python -m pytest
 
 #pypi_upload:
