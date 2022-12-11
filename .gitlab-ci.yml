@@ -5,7 +5,7 @@ stages:
   - release
 
 github_mirror:
-  image: git
+  image: alpine/git
   stage: mirror
   tags: [ docker ]
   only: [ master, develop ]
@@ -14,11 +14,10 @@ github_mirror:
     - chmod 0600 ~/.ssh/id_rsa
   script:
     - git fetch
-    - git checkout master
     - git pull
+    - git checkout origin/master
     - git push -f git@github.com:namboy94/manga-dl.git master
-    - git checkout develop
-    - git pull
+    - git checkout origin/develop
     - git push -f git@github.com:namboy94/manga-dl.git develop
 
 stylecheck:
