@@ -6,13 +6,12 @@
 
 ![Logo](resources/logo/logo-readme.png "Logo")
 
-This is a Manga Downloader that can download managa series from various sources.
+This is a Manga Downloader that can download manga series from various sources.
 
-## Further Information
+## Links
 
 * [Changelog](CHANGELOG)
 * [License (GPLv3)](LICENSE)
 * [Gitlab](https://gitlab.namibsun.net/namibsun/python/manga-dl)
 * [Github](https://github.com/namboy94/manga-dl)
-* [Progstats](https://progstats.namibsun.net/projects/manga-dl)
 * [PyPi](https://pypi.org/project/manga-dl)

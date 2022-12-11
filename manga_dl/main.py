@@ -1,5 +1,5 @@
-"""LICENSE
-Copyright 2015 Hermann Krumrey <hermann@krumreyh.com>
+"""
+Copyright 2015 Hermann Krumrey
 
 This file is part of manga-dl.
 
@@ -15,15 +15,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE"""
-import pkg_resources
-
-sentry_dsn = "https://0c1dcd24a5c346e09115ffebdb780772@sentry.namibsun.net/9"
-"""
-Sentry DSN used for exception logging
 """
 
-version = pkg_resources.get_distribution("manga-dl").version
-"""
-The current version of the package
-"""
+from manga_dl.cli.MangaDLCli import MangaDLCli
+from manga_dl.util.MangaDLDependencyInjector import MangaDLDependencyInjector
+
+
+def main():
+    cli = MangaDLDependencyInjector.get(MangaDLCli)
+    cli.run()
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

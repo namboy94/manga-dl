@@ -17,14 +17,12 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-
 # imports
 import os
+
 from setuptools import setup, find_packages
 
-
 if __name__ == "__main__":
-
     setup(
         name="manga-dl",
         version=open("version", "r").read(),
@@ -45,8 +43,13 @@ if __name__ == "__main__":
             "requests",
             "sentry-sdk",
             "puffotter",
-            "cfscrape"
+            "cfscrape",
+            "injector",
+            "lxml",
+            "matplotlib",
+            "Pillow"
         ],
+        tests_require=["pytest", "pytest-unordered"],
         include_package_data=True,
         zip_safe=False
     )
