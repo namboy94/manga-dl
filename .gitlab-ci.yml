@@ -13,9 +13,9 @@ github_mirror:
   tags: [ docker ]
   only: [ master, develop ]
   before_script:
-    - mkdir ~/.ssh/
-    - echo "$GITHUB_SSH_KEY" > ~/.ssh/id_rsa
-    - chmod 0600 ~/.ssh/id_rsa
+    - echo "$GITHUB_SSH_KEY" > id_rsa
+    - chmod 0600 id_rsa
+    - git config --add --local core.sshCommand 'ssh -i id_rsa'
   script:
     - git fetch
     - git pull origin master
