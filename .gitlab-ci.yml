@@ -52,32 +52,6 @@ unittest:
     - python setup.py install
     - pytest manga_dl
 
-#unittest:
-#  stage: test
-#  tags: [ docker ]
-#  script:
-#    - python-unittest
-#
-#gitstats:
-#  stage: stats
-#  tags: [ docker ]
-#  script:
-#    - gitstats-gen
-#
-#docgen:
-#  stage: stats
-#  tags: [ docker ]
-#  script:
-#    - sphinx-docgen
-#
-#release_upload:
-#  stage: release
-#  only: [ master ]
-#  tags: [ docker ]
-#  script:
-#    - github-release-upload $(cat version) "$(changelog-reader)"
-#    - gitlab-release-upload $(cat version) "$(changelog-reader)"
-#
 #pypi_upload:
 #  stage: release
 #  only: [ master ]
