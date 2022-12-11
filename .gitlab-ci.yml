@@ -48,7 +48,11 @@ unittest:
   tags: [ docker ]
   script:
     - pip install . -r requirements.txt
-    - python -m pytest
+    - python -m pytest --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
 
 pypi_upload:
   image: python:3.10
