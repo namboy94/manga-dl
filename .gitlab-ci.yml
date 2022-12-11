@@ -5,7 +5,7 @@ stages:
   - release
 
 github_mirror:
-  image: namboy94/ci-docker-environment:0.19.0  # Don't use this build image
+  image: git
   stage: mirror
   tags: [ docker ]
   only: [ master, develop ]
@@ -13,7 +13,13 @@ github_mirror:
     - echo "$GITHUB_SSH_KEY" > ~/.ssh/id_rsa
     - chmod 0600 ~/.ssh/id_rsa
   script:
-    - git-mirror-pusher git@github.com:namboy94/manga-dl.git master develop
+    - git fetch
+    - git checkout master
+    - git pull
+    - git push -f git@github.com:namboy94/manga-dl.git master
+    - git checkout develop
+    - git pull
+    - git push -f git@github.com:namboy94/manga-dl.git develop
 
 stylecheck:
   image: python:3.10

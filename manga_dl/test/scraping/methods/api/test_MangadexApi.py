@@ -70,12 +70,26 @@ class TestMangadexApi:
         assert result.artist is None
 
     def test_get_series_use_default_cover(self):
-        self.series.volumes[0].cover = None
+        series = MangaSeries(id="100", name="100", volumes=[
+            TestDataFactory.build_minimal_volume("1", cover=None),
+            TestDataFactory.build_minimal_volume(None, cover="Default"),
+        ])
+        self.requester.add_series(series)
 
-        result = self.under_test.get_series(self.series.id)
+        result = self.under_test.get_series(series.id)
 
-        assert result.volumes[0].cover is not None
-        assert result.volumes[0].cover == self.series.volumes[1].cover
+        assert result.volumes[0].cover == result.volumes[1].cover
+        assert result.volumes[0].cover.filename == "Default.png"
 
-        for chapter in result.volumes[0].chapters:
-            assert chapter.cover == self.series.volumes[1].cover
+    def test_get_series_use_minimal_cover(self):
+        series = MangaSeries(id="1000", name="100", volumes=[
+            TestDataFactory.build_minimal_volume("1", cover="one"),
+            TestDataFactory.build_minimal_volume("2", cover="two"),
+            TestDataFactory.build_minimal_volume("3", cover=None),
+        ])
+        self.requester.add_series(series)
+
+        result = self.under_test.get_series(series.id)
+
+        assert result.volumes[2].cover == result.volumes[0].cover
+        assert result.volumes[2].cover.filename == "one.png"

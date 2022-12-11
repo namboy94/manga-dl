@@ -41,5 +41,15 @@ class TestDataFactory:
         )
 
     @staticmethod
+    def build_minimal_volume(volume_number: Optional[str], cover: Optional[str]) -> MangaVolume:
+        number = None if volume_number is None else Decimal(volume_number)
+        cover_file = None if cover is None else DownloadedFile(bytes(cover, "utf8"), f"{cover}.png")
+        return MangaVolume(
+            volume_number=number,
+            cover=cover_file,
+            chapters=[MangaChapter(title="", number=Decimal(1), volume=number)]
+        )
+
+    @staticmethod
     def build_downloaded_files(chapter: MangaChapter) -> List[DownloadedFile]:
         return [DownloadedFile(bytes(page.image_file, "utf8"), page.get_filename()) for page in chapter.pages]

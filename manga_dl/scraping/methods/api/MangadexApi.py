@@ -32,7 +32,8 @@ class MangadexApi:
             self.logger.info(f"Found info: title={title}, author={author}, artist={artist}")
             volumes = self._load_volumes(series_id, load_pages)
             return MangaSeries(series_id, title, author, artist, volumes)
-        except ValueError:
+        except ValueError as e:
+            self.logger.warning(f"Failed to load series: {e}")
             return None
 
     def _call_api(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -64,13 +65,26 @@ class MangadexApi:
 
     def _apply_covers(self, series_id: str, volumes: List[MangaVolume]):
         volume_covers = self._load_volume_covers(series_id)
+
         for volume in volumes:
-            cover = volume_covers.get(volume.volume_number, None)
-            if cover is None and len(volume_covers) > 0:
-                cover = volume_covers[min(volume_covers.keys())]
-            volume.cover = cover
+            volume.cover = self._find_cover(volume, volume_covers)
             for chapter in volume.chapters:
-                chapter.cover = cover
+                chapter.cover = volume.cover
+
+    @staticmethod
+    def _find_cover(
+            volume: MangaVolume, volume_covers: Dict[Optional[Decimal], DownloadedFile]
+    ) -> Optional[DownloadedFile]:
+        cover = volume_covers.get(volume.volume_number, None)
+
+        if cover is None:
+            cover = volume_covers.get(None)
+
+        if cover is None and len(volume_covers) >= 1:
+            cover_keys = [key for key in volume_covers.keys() if key is not None]
+            cover = volume_covers.get(min(cover_keys))
+
+        return cover
 
     def _load_chapters(self, series_id: str, load_pages: bool) -> List[MangaChapter]:
         chapters = []
@@ -176,10 +190,17 @@ class MangadexApi:
             cover_info["attributes"]["volume"]: cover_info["attributes"]["fileName"]
             for cover_info in cover_data["data"]
         }
-        return {
-            None if key is None else Decimal(key): DownloadedFile(
-                data=self.http_requester.download_file(f"https://uploads.mangadex.org/covers/{series_id}/{filename}"),
-                filename=filename
+        cover_bytes = {
+            (key, filename): self.http_requester.download_file(
+                f"https://uploads.mangadex.org/covers/{series_id}/{filename}"
             )
             for key, filename in cover_filenames.items()
+        }
+        return {
+            None if key is None else Decimal(key): DownloadedFile(
+                data=file_bytes,
+                filename=filename
+            )
+            for (key, filename), file_bytes in cover_bytes.items()
+            if file_bytes is not None
         }

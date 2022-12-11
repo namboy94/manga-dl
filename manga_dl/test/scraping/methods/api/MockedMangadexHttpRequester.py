@@ -6,15 +6,19 @@ from manga_dl.model.MangaChapter import MangaChapter
 from manga_dl.model.MangaSeries import MangaSeries
 from manga_dl.test.testutils.TestIdCreator import TestIdCreator
 from manga_dl.util.HttpRequester import HttpRequester
+from manga_dl.util.Timer import Timer
 
 
 class MockedMangadexHttpRequester(HttpRequester):
-    _series: List[MangaSeries] = []
-    _external_chapters = False
-    _create_http_error = False
-    _create_api_error = False
-    _endpoint_overrides: Dict[str, Any] = {}
-    _file_cache: Dict[str, DownloadedFile] = {}
+
+    def __init__(self, timer: Timer):
+        super().__init__(timer)
+        self._series: List[MangaSeries] = []
+        self._external_chapters = False
+        self._create_http_error = False
+        self._create_api_error = False
+        self._endpoint_overrides: Dict[str, Any] = {}
+        self._file_cache: Dict[str, DownloadedFile] = {}
 
     def add_series(self, series: MangaSeries):
         self._series.append(series)
@@ -74,7 +78,11 @@ class MockedMangadexHttpRequester(HttpRequester):
         if params["offset"] != 0:
             return self._wrap_in_data([])
 
-        all_chapters = itertools.chain(*[series.get_chapters() for series in self._series])
+        all_chapters = itertools.chain(*[
+            series.get_chapters()
+            for series in self._series
+            if series.id == params["manga"]
+        ])
 
         return self._wrap_in_data([
             self._create_chapter_response(chapter, "somegroup")
