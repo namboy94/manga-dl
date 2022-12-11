@@ -9,7 +9,7 @@ from manga_dl.util.CoverManipulator import CoverManipulator
 
 class TestCoverManipulator:
 
-    def setup(self):
+    def setup_method(self):
         self._under_test = CoverManipulator()
 
     @patch("manga_dl.util.CoverManipulator.ImageDraw.Draw")

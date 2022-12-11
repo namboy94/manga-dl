@@ -5,7 +5,7 @@ from manga_dl.util.Timer import Timer
 
 class TestTimer:
 
-    def setup(self):
+    def setup_method(self):
         self.under_test = Timer()
 
     def test_sleep(self):

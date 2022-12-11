@@ -9,7 +9,7 @@ from manga_dl.test.testutils.TestDataFactory import TestDataFactory
 
 class TestDirectoryBundler:
 
-    def setup(self):
+    def setup_method(self):
         self.target = Path(tempfile.gettempdir()) / "dirbundler"
         self.under_test = DirectoryBundler()
         if self.target.exists():

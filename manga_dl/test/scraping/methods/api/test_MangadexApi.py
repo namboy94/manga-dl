@@ -11,7 +11,7 @@ from manga_dl.util.Timer import Timer
 
 class TestMangadexApi:
 
-    def setup(self):
+    def setup_method(self):
         self.dateconverter = DateConverter()
         self.timer = Mock(Timer)
         self.requester = MockedMangadexHttpRequester(self.timer)

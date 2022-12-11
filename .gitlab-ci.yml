@@ -16,6 +16,7 @@ github_mirror:
     - echo "$GITHUB_SSH_KEY" > id_rsa
     - chmod 0600 id_rsa
     - git config --add --local core.sshCommand 'ssh -i id_rsa'
+    - ssh-keyscan -H github.com > ~/.ssh/known_hosts
   script:
     - git fetch
     - git pull origin master
@@ -40,6 +41,14 @@ type_check:
   script:
     - pip install mypy
     - mypy -p manga_dl --ignore-missing-imports --non-interactive --install-types
+
+unittest:
+  image: python:3.10
+  stage: test
+  tags: [ docker ]
+  script:
+    - pip install pytest
+    - pytest manga_dl
 
 #unittest:
 #  stage: test

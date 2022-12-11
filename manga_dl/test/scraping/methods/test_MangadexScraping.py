@@ -7,7 +7,7 @@ from manga_dl.scraping.methods.api.MangadexApi import MangadexApi
 
 class TestMangadexScraping:
 
-    def setup(self):
+    def setup_method(self):
         self.manga_series = Mock(MangaSeries)
         self.manga_series_no_pages = Mock(MangaSeries)
         self.mangadex_api = Mock(MangadexApi)

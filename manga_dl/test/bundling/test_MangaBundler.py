@@ -21,7 +21,7 @@ class TestBundler(MangaBundler):
 
 class TestMangaBundler:
 
-    def setup(self):
+    def setup_method(self):
         self.under_test = TestBundler()
 
     def test_is_applicable(self):

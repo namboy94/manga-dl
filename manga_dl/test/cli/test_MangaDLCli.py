@@ -13,7 +13,7 @@ from manga_dl.scraping.ScrapingService import ScrapingService
 
 class TestMangaDLCli:
 
-    def setup(self):
+    def setup_method(self):
         self.url = "example.org"
         self.target = Path(tempfile.gettempdir())
         self.series = Mock(MangaSeries)

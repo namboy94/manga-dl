@@ -10,7 +10,7 @@ from manga_dl.util.Timer import Timer
 
 class TestHttpRequester:
 
-    def setup(self):
+    def setup_method(self):
         self.timer = Mock(Timer)
         self.timer.sleep.return_value = None
         self.under_test = HttpRequester(self.timer)

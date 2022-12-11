@@ -7,7 +7,7 @@ from manga_dl.scraping.ScrapingService import ScrapingService
 
 class TestScrapingService:
 
-    def setup(self):
+    def setup_method(self):
         self.url = "https://example.com/123"
         self.id = "123"
 

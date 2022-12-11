@@ -5,7 +5,7 @@ from manga_dl.util.DateConverter import DateConverter
 
 class TestDateConverter:
 
-    def setup(self):
+    def setup_method(self):
         self.under_test = DateConverter()
         self.datetime = datetime(year=2020, month=1, day=2, hour=10, minute=5, second=15)
         self.date_string = "2020-01-02T10:05:15"

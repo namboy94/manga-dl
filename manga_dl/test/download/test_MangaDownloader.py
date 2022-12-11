@@ -14,7 +14,7 @@ from manga_dl.util.HttpRequester import HttpRequester
 
 class TestMangaDownloader:
 
-    def setup(self):
+    def setup_method(self):
         self.dummy_bytes = bytes("Hello World", "utf8")
         self.file_type = MangaFileFormat.CBZ
         self.testing_path = Path(tempfile.gettempdir()) / "testing_download"

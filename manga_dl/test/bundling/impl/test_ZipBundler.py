@@ -11,7 +11,7 @@ from manga_dl.test.testutils.TestDataFactory import TestDataFactory
 
 class TestZipBundler:
 
-    def setup(self):
+    def setup_method(self):
         self.target = Path(tempfile.gettempdir()) / "zipbundler.zip"
         self.under_test = ZipBundler()
         if self.target.exists():

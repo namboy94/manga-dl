@@ -11,7 +11,7 @@ from manga_dl.util.CoverManipulator import CoverManipulator
 
 class TestCBZBundler:
 
-    def setup(self):
+    def setup_method(self):
         self.target = Path(tempfile.gettempdir()) / "cbzbundler.cbz"
         self.comicrack = Mock(ComicRackMetadataGenerator)
         self.cover_manipulator = Mock(CoverManipulator)

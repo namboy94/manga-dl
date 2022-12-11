@@ -10,7 +10,7 @@ from manga_dl.model.MangaFileFormat import MangaFileFormat
 
 class TestMangaDLCliParser:
 
-    def setup(self):
+    def setup_method(self):
         self.url = "https://example.com/123"
         self.under_test = MangaDLCliParser()
 

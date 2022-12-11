@@ -10,7 +10,7 @@ from manga_dl.util.ComicRackMetadataGenerator import ComicRackMetadataGenerator
 
 class TestComicRackMetadataGenerator:
 
-    def setup(self):
+    def setup_method(self):
         self.series = TestDataFactory.build_series()
         self.chapter = self.series.get_chapters()[0]
         self.cover_file: Optional[str] = "image.png"
