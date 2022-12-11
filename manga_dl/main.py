@@ -1,5 +1,5 @@
 """
-Copyright 2015-2017 Hermann Krumrey
+Copyright 2015 Hermann Krumrey
 
 This file is part of manga-dl.
 
@@ -17,22 +17,14 @@ You should have received a copy of the GNU General Public License
 along with manga-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from typing import List
-
-from injector import Injector
-
-from manga_dl.bundling.MangaBundler import MangaBundler
 from manga_dl.cli.MangaDLCli import MangaDLCli
-from manga_dl.scraping.ScrapingMethod import ScrapingMethod
+from manga_dl.util.MangaDLDependencyInjector import MangaDLDependencyInjector
 
 
 def main():
-    injector = Injector()
-    injector.binder.multibind(List[ScrapingMethod], ScrapingMethod.get_scraping_methods(injector))
-    injector.binder.multibind(List[MangaBundler], MangaBundler.get_bundlers(injector))
-    cli = injector.get(MangaDLCli)
+    cli = MangaDLDependencyInjector.get(MangaDLCli)
     cli.run()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
