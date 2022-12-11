@@ -48,8 +48,7 @@ unittest:
   stage: test
   tags: [ docker ]
   script:
-    - pip install pytest
-    - python setup.py install
+    - pip install -r requirements.txt
     - pytest manga_dl
 
 #pypi_upload:
