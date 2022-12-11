@@ -5,7 +5,9 @@ stages:
   - release
 
 github_mirror:
-  image: alpine/git
+  image:
+    name: alpine/git
+    entrypoint: [ "" ]
   stage: mirror
   tags: [ docker ]
   only: [ master, develop ]
