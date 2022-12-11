@@ -39,12 +39,12 @@ if __name__ == "__main__":
         packages=find_packages(),
         scripts=list(map(lambda x: os.path.join("bin", x), os.listdir("bin"))),
         install_requires=[
-            "requests",
-            "sentry-sdk",
-            "injector",
-            "lxml",
-            "matplotlib",
-            "Pillow"
+            "requests==2.28.1",
+            "sentry-sdk==1.9.9",
+            "injector==0.20.1",
+            "lxml==4.9.1",
+            "matplotlib==3.6.2",
+            "Pillow==9.2.0"
         ],
         tests_require=["pytest", "pytest-unordered"],
         include_package_data=True,
