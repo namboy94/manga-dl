@@ -44,7 +44,8 @@ if __name__ == "__main__":
             "injector==0.20.1",
             "lxml==4.9.1",
             "matplotlib==3.6.2",
-            "Pillow==9.2.0"
+            "Pillow==9.2.0",
+            "urllib3<1.27,>=1.21.1"
         ],
         tests_require=["pytest", "pytest-unordered"],
         include_package_data=True,
