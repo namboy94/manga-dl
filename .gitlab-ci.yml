@@ -8,10 +8,12 @@ github_mirror:
   image:
     name: alpine/git
     entrypoint: [ "" ]
+  allow_failure: true
   stage: mirror
   tags: [ docker ]
   only: [ master, develop ]
   before_script:
+    - mkdir ~/.ssh/
     - echo "$GITHUB_SSH_KEY" > ~/.ssh/id_rsa
     - chmod 0600 ~/.ssh/id_rsa
   script:
