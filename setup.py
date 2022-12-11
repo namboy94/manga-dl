@@ -28,7 +28,8 @@ if __name__ == "__main__":
         ],
         tests_require=[
             "pytest",
-            "pytest-unordered"
+            "pytest-unordered",
+            "pytest-cov"
         ],
         include_package_data=True,
         zip_safe=False
