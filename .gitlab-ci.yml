@@ -54,8 +54,6 @@ unittest:
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     when: always
-    paths:
-      - coverage.xml
     reports:
       junit: report.xml
       coverage_report:
