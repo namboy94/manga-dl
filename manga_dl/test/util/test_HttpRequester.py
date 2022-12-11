@@ -41,7 +41,7 @@ class TestHttpRequester:
 
     def test_get_connection_error_retry_success(self):
         counter = {"count": 0}
-        
+
         def get_mock(*_, **__):
             if counter["count"] == 0:
                 counter["count"] += 1

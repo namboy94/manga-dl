@@ -170,7 +170,7 @@ class MangadexApi:
     def get_first_id_with_type_from_relations(relations: List[Dict[str, str]], key: str) -> Optional[str]:
         return next(filter(lambda x: x["type"] == key, relations), {"id": None})["id"]
 
-    def _load_volume_covers(self, series_id: str) -> Dict[Decimal, DownloadedFile]:
+    def _load_volume_covers(self, series_id: str) -> Dict[Optional[Decimal], DownloadedFile]:
         cover_data = self._call_api("cover", {"manga[]": series_id})
         cover_filenames = {
             cover_info["attributes"]["volume"]: cover_info["attributes"]["fileName"]
