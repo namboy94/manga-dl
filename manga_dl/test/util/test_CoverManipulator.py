@@ -1,8 +1,8 @@
 from unittest.mock import Mock, patch
 
-from PIL import ImageFont
 from PIL.Image import Image
 from PIL.ImageDraw import ImageDraw
+from PIL.ImageFont import FreeTypeFont
 
 from manga_dl.util.CoverManipulator import CoverManipulator
 
@@ -78,7 +78,7 @@ class TestCoverManipulator:
         return image
 
     def _create_draw_mock(self) -> Mock:
-        def textsize(text: str, font: ImageFont):
+        def textsize(text: str, font: FreeTypeFont):
             return len(text) * font.size, font.size
 
         draw = Mock(ImageDraw)

@@ -1,7 +1,8 @@
 from typing import Optional
 
 from lxml import etree
-from lxml.etree import Element
+# noinspection PyProtectedMember
+from lxml.etree import _Element as Element
 
 from manga_dl import version
 from manga_dl.model.MangaChapter import MangaChapter
@@ -10,7 +11,7 @@ from manga_dl.model.MangaSeries import MangaSeries
 
 class ComicRackMetadataGenerator:
 
-    def create_metadata(self, series: MangaSeries, chapter: MangaChapter, cover_file: Optional[str]) -> str:
+    def create_metadata(self, series: MangaSeries, chapter: MangaChapter, cover_file: Optional[str]) -> bytes:
         comic_info = etree.Element("ComicInfo")
         etree.SubElement(comic_info, "Notes").text = f"Created with manga-dl V{version}"
 

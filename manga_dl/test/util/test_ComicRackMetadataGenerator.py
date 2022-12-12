@@ -1,7 +1,8 @@
 from decimal import Decimal
 from typing import Optional, Union, List
 
-from lxml import etree
+# noinspection PyProtectedMember
+from lxml.etree import _Element as Element
 from lxml.etree import fromstring
 
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
@@ -13,7 +14,7 @@ class TestComicRackMetadataGenerator:
     def setup_method(self):
         self.series = TestDataFactory.build_series()
         self.chapter = self.series.get_chapters()[0]
-        self.cover_file: Optional[str] = "image.png"
+        self.cover_file = "image.png"
         self.under_test = ComicRackMetadataGenerator()
 
     def test_create_metadata(self):
@@ -41,12 +42,12 @@ class TestComicRackMetadataGenerator:
         metadata = fromstring(self.under_test.create_metadata(self.series, self.chapter, self.cover_file))
         self._assert_metadata(metadata)
 
-    def _assert_metadata(self, metadata: etree):
+    def _assert_metadata(self, metadata: Element):
         self._assert_series_metadata(metadata)
         self._assert_chapter_metadata(metadata)
         self._assert_pages_metadata(metadata)
 
-    def _assert_series_metadata(self, metadata: etree):
+    def _assert_series_metadata(self, metadata: Element):
         self._assert_tag(metadata, "Series", self.series.name)
         self._assert_tag(metadata, "Writer", self.series.author)
         self._assert_tag(metadata, "Inker", self.series.artist)
@@ -54,7 +55,7 @@ class TestComicRackMetadataGenerator:
         self._assert_tag(metadata, "Colorist", self.series.artist)
         self._assert_tag(metadata, "CoverArtist", self.series.artist)
 
-    def _assert_chapter_metadata(self, metadata: etree):
+    def _assert_chapter_metadata(self, metadata: Element):
         self._assert_tag(metadata, "Title", self.chapter.title)
         self._assert_tag(metadata, "Number", self.chapter.number)
         self._assert_tag(metadata, "Year", self.chapter.published_at.year)
@@ -64,9 +65,10 @@ class TestComicRackMetadataGenerator:
         self._assert_tag(metadata, "ScanInformation", "manga-dl")
         self._assert_tag(metadata, "Volume", self.chapter.volume)
 
-    def _assert_pages_metadata(self, metadata: etree):
-        assert metadata.find("Pages") is not None
-        pages = metadata.find("Pages").findall("Page")
+    def _assert_pages_metadata(self, metadata: Element):
+        pages_element = metadata.find("Pages")
+        assert pages_element is not None
+        pages = pages_element.findall("Page")
 
         if self.cover_file is not None:
             cover = pages.pop(0)
@@ -79,12 +81,14 @@ class TestComicRackMetadataGenerator:
             assert pages.pop(0).get("Image") == page.get_filename()
 
     @staticmethod
-    def _assert_tag(metadata: etree, tag: str, expected: Optional[Union[str, int, Decimal]]):
+    def _assert_tag(metadata: Element, tag: str, expected: Optional[Union[str, int, Decimal]]):
         if expected is None:
             assert metadata.find(tag) is None
         else:
-            assert metadata.find(tag).text == str(expected)
+            result_element = metadata.find(tag)
+            assert result_element is not None
+            assert result_element.text == str(expected)
 
-    def _assert_tags_missing(self, metadata: etree, tags: List[str]):
+    def _assert_tags_missing(self, metadata: Element, tags: List[str]):
         for tag in tags:
             self._assert_tag(metadata, tag, None)
