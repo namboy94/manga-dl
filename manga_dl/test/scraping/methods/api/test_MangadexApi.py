@@ -25,6 +25,16 @@ class TestMangadexApi:
 
         assert result == self.series
 
+    def test_get_series_titles_unavailable(self):
+        self.series.get_chapters()[0].title = None
+        self.series.get_chapters()[1].title = ""
+
+        result = self.under_test.get_series(self.series.id)
+
+        assert result != self.series
+        assert result.get_chapters()[0].title == "Chapter 1"
+        assert result.get_chapters()[1].title == "Chapter 2"
+
     def test_get_series_no_pages(self):
         result = self.under_test.get_series(self.series.id, False)
 

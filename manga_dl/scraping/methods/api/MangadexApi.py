@@ -131,7 +131,7 @@ class MangadexApi:
         raw_chapter_number = attributes["chapter"]
         raw_volume_number = attributes["volume"]
 
-        title = attributes["title"] if attributes["title"] != "" else f"Chapter {raw_chapter_number}"
+        title = attributes["title"] if attributes["title"] not in ["", None] else f"Chapter {raw_chapter_number}"
         chapter_number = Decimal("0" if raw_chapter_number is None else raw_chapter_number)
         volume_number = None if raw_volume_number is None else Decimal(raw_volume_number)
         created_at = self.date_converter.convert_to_datetime(attributes["createdAt"])
