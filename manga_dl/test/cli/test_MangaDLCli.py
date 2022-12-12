@@ -47,6 +47,13 @@ class TestMangaDLCli:
             self.under_test.run()
             basicConfig.assert_called_with(level=logging.INFO)
 
+    def test_debug(self):
+        self.options.debug = True
+
+        with patch("logging.basicConfig") as basicConfig:
+            self.under_test.run()
+            basicConfig.assert_called_with(level=logging.DEBUG)
+
     def test_quiet(self):
         self.options.quiet = True
 
