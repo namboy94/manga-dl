@@ -14,4 +14,5 @@ class MangaDLCliOptions:
     out: Path = Path.home() / "Downloads/Manga"
     file_format: MangaFileFormat = MangaFileFormat.CBZ
     verbose: bool = False
+    debug: bool = False
     quiet: bool = False

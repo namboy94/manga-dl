@@ -37,6 +37,8 @@ class MangaDLCli:
     def _adjust_log_level(self):
         if self._options.verbose:
             logging.basicConfig(level=logging.INFO)
+        if self._options.debug:
+            logging.basicConfig(level=logging.DEBUG)
         if self._options.quiet:
             logging.disable(logging.CRITICAL)
 

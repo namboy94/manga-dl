@@ -9,6 +9,7 @@ from manga_dl.cli.MangaDLCliParser import MangaDLCliParser
 from manga_dl.download.MangaDownloader import MangaDownloader
 from manga_dl.model.MangaSeries import MangaSeries
 from manga_dl.scraping.ScrapingService import ScrapingService
+from manga_dl.util.StringFormatter import StringFormatter
 
 
 class TestMangaDLCli:
@@ -24,20 +25,23 @@ class TestMangaDLCli:
         self.scraper = Mock(ScrapingService)
         self.scraper.scrape.return_value = self.series
         self.downloader = Mock(MangaDownloader)
+        self.formatter = Mock(StringFormatter)
+        self.formatter.format_series.return_value = "Series"
 
-        self.under_test = MangaDLCli(self.parser, self.scraper, self.downloader)
+        self.under_test = MangaDLCli(self.parser, self.scraper, self.downloader, self.formatter)
 
     def test_run_download(self):
         self.under_test.run()
 
-        self.scraper.scrape.assert_called_with(self.url)
+        self.scraper.scrape.assert_called_with(self.url, True)
         self.downloader.download.assert_called_with(self.series, self.target, self.options.file_format)
 
     def test_run_list(self):
         self.options.list_chapters = True
         self.under_test.run()
 
-        self.scraper.scrape.assert_called_with(self.url)
+        self.scraper.scrape.assert_called_with(self.url, False)
+        self.formatter.format_series.assert_called_with(self.series)
         self.downloader.download.assert_not_called()
 
     def test_verbose(self):

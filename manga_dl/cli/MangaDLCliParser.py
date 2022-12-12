@@ -25,6 +25,8 @@ class MangaDLCliParser:
                                   help="Specifies the output path")
         self._parser.add_argument("-v", "--verbose", action="store_true",
                                   help="Enable more verbose output")
+        self._parser.add_argument("-d", "--debug", action="store_true",
+                                  help="Enable debugging output")
         self._parser.add_argument("-q", "--quiet", action="store_true",
                                   help="Disable all output")
 
