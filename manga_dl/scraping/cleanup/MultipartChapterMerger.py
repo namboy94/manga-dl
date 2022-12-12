@@ -1,4 +1,5 @@
 import itertools
+import logging
 from copy import deepcopy
 from decimal import Decimal
 from typing import List
@@ -9,6 +10,7 @@ from manga_dl.model.MangaVolume import MangaVolume
 
 
 class MultipartChapterMerger:
+    logger = logging.getLogger("MultipartChapterMerger")
 
     def merge_multipart_chapters(self, _series: MangaSeries) -> MangaSeries:
         series = deepcopy(_series)
@@ -23,8 +25,8 @@ class MultipartChapterMerger:
         volume_chapters = list(sorted(volume.chapters, key=lambda x: x.number))
         grouped_by_macro_chapter = itertools.groupby(volume_chapters, lambda x: x.get_macro_micro_chapter()[0])
 
-        for macro_chapter, grouped_chapters in grouped_by_macro_chapter:
-            grouped_chapters = sorted(grouped_chapters, key=lambda x: x.number)
+        for macro_chapter, _grouped_chapters in grouped_by_macro_chapter:
+            grouped_chapters = list(sorted(_grouped_chapters, key=lambda x: x.number))
 
             to_merge = [grouped_chapters.pop(0)]
 
@@ -40,6 +42,8 @@ class MultipartChapterMerger:
 
         if len(chapters) == 1:
             return chapters[0]
+
+        self.logger.debug(f"Merging chapters {list(map(lambda x: x.number, chapters))}")
 
         latest_published_at = max(chapters, key=lambda x: x.published_at).published_at
         merged = chapters.pop(0)
