@@ -29,7 +29,16 @@ if __name__ == "__main__":
         tests_require=[
             "pytest",
             "pytest-unordered",
-            "pytest-cov"
+            "pytest-cov",
+            "mypy",
+            "mypy-extensions",
+            "types-Pillow",
+            "types-requests",
+            "types-setuptools",
+            "types-urllib3",
+            "typing_extensions",
+            "data-science-types",
+            "lxml-stubs"
         ],
         include_package_data=True,
         zip_safe=False
