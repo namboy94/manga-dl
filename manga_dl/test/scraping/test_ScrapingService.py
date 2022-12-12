@@ -3,6 +3,7 @@ from unittest.mock import Mock
 from manga_dl.model.MangaSeries import MangaSeries
 from manga_dl.scraping.ScrapingMethod import ScrapingMethod
 from manga_dl.scraping.ScrapingService import ScrapingService
+from manga_dl.scraping.cleanup.ChapterNormalizer import ChapterNormalizer
 from manga_dl.scraping.cleanup.DuplicateChapterRemover import DuplicateChapterRemover
 from manga_dl.scraping.cleanup.MultipartChapterMerger import MultipartChapterMerger
 
@@ -23,10 +24,17 @@ class TestScrapingService:
 
         self.dupe_remover = Mock(DuplicateChapterRemover)
         self.chapter_merger = Mock(MultipartChapterMerger)
+        self.chapter_normalizer = Mock(ChapterNormalizer)
         self.dupe_remover.remove_duplicate_chapters.side_effect = lambda x: x
         self.chapter_merger.merge_multipart_chapters.side_effect = lambda x: x
+        self.chapter_normalizer.normalize_chapters.side_effect = lambda x: x
 
-        self.under_test = ScrapingService(self.dupe_remover, self.chapter_merger, [self.scraping_method])
+        self.under_test = ScrapingService(
+            self.dupe_remover,
+            self.chapter_merger,
+            self.chapter_normalizer,
+            [self.scraping_method]
+        )
 
     def test_scrape(self):
         result = self.under_test.scrape(self.url)
@@ -36,6 +44,7 @@ class TestScrapingService:
         self.scraping_method.get_series.assert_called_with(self.id, True)
         self.dupe_remover.remove_duplicate_chapters.assert_called_with(self.series)
         self.chapter_merger.merge_multipart_chapters.assert_called_with(self.series)
+        self.chapter_normalizer.normalize_chapters.assert_called_with(self.series)
 
         assert result == self.series
 
@@ -47,6 +56,7 @@ class TestScrapingService:
         self.scraping_method.get_series.assert_called_with(self.id, False)
         self.dupe_remover.remove_duplicate_chapters.assert_called_with(self.series_no_pages)
         self.chapter_merger.merge_multipart_chapters.assert_called_with(self.series_no_pages)
+        self.chapter_normalizer.normalize_chapters.assert_called_with(self.series_no_pages)
 
         assert result == self.series_no_pages
 
@@ -59,6 +69,7 @@ class TestScrapingService:
         self.scraping_method.get_series.assert_not_called()
         self.dupe_remover.remove_duplicate_chapters.assert_not_called()
         self.chapter_merger.merge_multipart_chapters.assert_not_called()
+        self.chapter_normalizer.normalize_chapters.assert_not_called()
 
         assert result is None
 
@@ -79,11 +90,14 @@ class TestScrapingService:
     def test_scrape_cleanup_correct(self):
         first = Mock(MangaSeries)
         second = Mock(MangaSeries)
+        third = Mock(MangaSeries)
         self.dupe_remover.remove_duplicate_chapters.side_effect = lambda _: first
         self.chapter_merger.merge_multipart_chapters.side_effect = lambda _: second
+        self.chapter_normalizer.normalize_chapters.side_effect = lambda _: third
 
         result = self.under_test.scrape(self.url)
 
         self.dupe_remover.remove_duplicate_chapters.assert_called_with(self.series)
         self.chapter_merger.merge_multipart_chapters.assert_called_with(first)
-        assert result == second
+        self.chapter_normalizer.normalize_chapters.assert_called_with(second)
+        assert result == third

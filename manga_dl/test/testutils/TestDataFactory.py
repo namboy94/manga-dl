@@ -29,7 +29,7 @@ class TestDataFactory:
             title: str,
             number: Union[float, str, int],
             page_count: int = 10,
-            volume: Optional[float] = None,
+            volume: Optional[Union[float, int, str]] = None,
             published_at: str = "2020-01-01"
     ) -> MangaChapter:
         decimal_volume = None if volume is None else Decimal(volume)
