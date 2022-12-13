@@ -17,7 +17,8 @@ class TestHttpRequester:
         self.cache_file = tempfile.NamedTemporaryFile()
         self.timer = Mock(Timer)
         self.timer.sleep.return_value = None
-        self.under_test = HttpRequester(self.timer, Path(self.cache_file.name))
+        self.under_test = HttpRequester(self.timer)
+        self.under_test.change_cache_file(Path(self.cache_file.name))
 
     def teardown_method(self):
         self.cache_file.close()
@@ -27,7 +28,7 @@ class TestHttpRequester:
         directory_path = Path(directory.name)
         cache_file_path = directory_path / "subdir/cache.sqlite"
 
-        HttpRequester(self.timer, cache_file_path)
+        HttpRequester(self.timer).change_cache_file(cache_file_path)
 
         assert cache_file_path.parent.is_dir()
         assert cache_file_path.is_file()
@@ -37,9 +38,11 @@ class TestHttpRequester:
     def test_get(self, to_patch: str = "requests.session", cached: bool = False):
         with patch(to_patch) as sessionmaker:
             expected = {"hello": "world"}
-            sessionmaker.return_value = self._create_json_response_session(expected)
+            session = self._create_json_response_session(expected)
+            sessionmaker.return_value = session
 
             assert self.under_test.get_json("example.com", cached=cached) == expected
+            session.get.assert_called_with("example.com", params=None)
             self.timer.sleep.assert_not_called()
 
     def test_get_cached(self):
@@ -143,20 +146,20 @@ class TestHttpRequester:
         assert initial_delta > cached_delta
         assert expected == self.under_test.get_json(url)
 
-    def _create_json_response_session(self, content: Dict[str, Any], status_code: int = 200) -> Session:
+    def _create_json_response_session(self, content: Dict[str, Any], status_code: int = 200) -> Mock:
         response = Mock(Response)
         response.status_code = status_code
         response.text = json.dumps(content)
         return self._create_session(response)
 
-    def _create_binary_response(self, content: bytes, status_code: int = 200) -> Session:
+    def _create_binary_response(self, content: bytes, status_code: int = 200) -> Mock:
         response = Mock(Response)
         response.status_code = status_code
         response.content = content
         return self._create_session(response)
 
     @staticmethod
-    def _create_session(return_value: Response) -> Session:
+    def _create_session(return_value: Response) -> Mock:
         session = Mock(Session)
         session.get.return_value = return_value
         return session

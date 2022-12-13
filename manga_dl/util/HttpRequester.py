@@ -16,9 +16,13 @@ class HttpRequester:
     logger = logging.getLogger("HttpRequester")
 
     @inject
-    def __init__(self, timer: Timer, cache_file: Optional[Path] = None):
+    def __init__(self, timer: Timer):
         self.timer = timer
-        self.cache_file = Path(os.path.expanduser("~")) / ".cache/mangadl.sqlite" if cache_file is None else cache_file
+        self.cache_file = Path(os.path.expanduser("~")) / ".cache/mangadl.sqlite"
+        self.change_cache_file(self.cache_file)
+
+    def change_cache_file(self, path: Path):
+        self.cache_file = path
         self.cache_file.parent.mkdir(exist_ok=True, parents=True)
         self._create_session().close()
 
@@ -34,7 +38,6 @@ class HttpRequester:
         return response if response is None else json.loads(response.text)
 
     def download_file(self, url: str, cached: bool = True) -> Optional[bytes]:
-
         headers = {"User-Agent": "Mozilla/5.0"}
         response = self._handle_request(
             lambda: self._create_session(cached).get(url, headers=headers)
