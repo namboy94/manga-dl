@@ -49,6 +49,21 @@ class TestChapterNormalizer:
 
         assert result == series
 
+    def test_normalize_chapters_decimal_chapter_in_previous_volume(self):
+        series = MangaSeries("", "", volumes=[
+            MangaVolume(volume_number=Decimal(1), chapters=[
+                TestDataFactory.build_chapter("B", "1.5", volume=2),
+            ]),
+            MangaVolume(volume_number=Decimal(2), chapters=[
+                TestDataFactory.build_chapter("B", 1, volume=2),
+            ]),
+        ])
+
+        result = self.under_test.normalize_chapters(series)
+
+        assert result.get_chapters()[1].number == Decimal(2)
+        assert result != series
+
     def test_normalize_chapters_unknown_volume(self):
         series = MangaSeries("", "", volumes=[
             MangaVolume(volume_number=Decimal(1), chapters=[

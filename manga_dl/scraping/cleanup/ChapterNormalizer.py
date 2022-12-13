@@ -52,7 +52,8 @@ class ChapterNormalizer:
             previous_chapter: Optional[MangaChapter],
             previous_volume_last_chapter: MangaChapter
     ) -> Decimal:
-        adjusted_chapter_number = chapter.number + previous_volume_last_chapter.number
+        last_chapter_number = previous_volume_last_chapter.number - previous_volume_last_chapter.number % 1
+        adjusted_chapter_number = chapter.number + last_chapter_number
         previous_chapter_number = adjusted_chapter_number if previous_chapter is None else previous_chapter.number
 
         if previous_chapter_number < chapter.number:
