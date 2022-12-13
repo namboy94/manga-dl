@@ -35,7 +35,7 @@ class MangadexApi:
             return None
 
     def _call_api(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        response = self.http_requester.get_json(f"{self.base_url}/{endpoint}", params, delay=0.5)
+        response = self.http_requester.get_json(f"{self.base_url}/{endpoint}", params, delay=1.0)
 
         if response is None or response["result"] == "error":
             self.logger.warning(response)
