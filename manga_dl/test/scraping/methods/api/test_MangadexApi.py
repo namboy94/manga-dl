@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 from manga_dl.model.MangaSeries import MangaSeries
+from manga_dl.model.MangaVolume import MangaVolume
 from manga_dl.scraping.methods.api.MangadexApi import MangadexApi
 from manga_dl.test.scraping.methods.api.MockedMangadexHttpRequester import MockedMangadexHttpRequester
 from manga_dl.test.testutils.TestDataFactory import TestDataFactory
@@ -103,3 +104,16 @@ class TestMangadexApi:
 
         assert result.volumes[2].cover == result.volumes[0].cover
         assert result.volumes[2].cover.filename == "one.png"
+
+    def test_get_series_volumes_correctly_grouped(self):
+        series = TestDataFactory.build_series("AAA")
+        separated_chapter = TestDataFactory.build_chapter(
+            title="ABC", number=str(series.volumes[0].chapters[-1].number + 1), volume=series.volumes[0].volume_number
+        )
+        series.volumes.append(MangaVolume(series.volumes[0].volume_number, [separated_chapter]))
+        self.requester.add_series(series)
+
+        result = self.under_test.get_series(series.id)
+
+        assert len(result.volumes) == len(series.volumes) - 1
+        assert result.volumes[0].chapters[-1] == separated_chapter

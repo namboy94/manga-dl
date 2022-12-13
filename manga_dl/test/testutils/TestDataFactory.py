@@ -13,7 +13,7 @@ from manga_dl.test.testutils.TestIdCreator import TestIdCreator
 class TestDataFactory:
 
     @staticmethod
-    def build_series() -> MangaSeries:
+    def build_series(series_id: str = "123") -> MangaSeries:
         coverfile = DownloadedFile(b"CoverImage", "cover.png")
         volumes = [
             MangaVolume(volume_number=Decimal(1),
@@ -22,7 +22,7 @@ class TestDataFactory:
                         cover=coverfile),
             MangaVolume(chapters=[TestDataFactory.build_chapter("S", 1.5, 10)], cover=coverfile)
         ]
-        return MangaSeries(id="123", name="TestManga", author="TestAuthor", artist="TestArtist", volumes=volumes)
+        return MangaSeries(id=series_id, name="TestManga", author="TestAuthor", artist="TestArtist", volumes=volumes)
 
     @staticmethod
     def build_chapter(
