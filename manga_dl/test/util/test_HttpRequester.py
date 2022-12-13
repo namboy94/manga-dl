@@ -35,39 +35,43 @@ class TestHttpRequester:
 
         directory.cleanup()
 
-    def test_get(self, to_patch: str = "requests.session", cached: bool = False):
-        with patch(to_patch) as sessionmaker:
-            expected = {"hello": "world"}
-            session = self._create_json_response_session(expected)
-            sessionmaker.return_value = session
+    @patch("requests.session")
+    def test_get(self, sessionmaker: Mock):
+        self._test_get(sessionmaker, False)
 
-            assert self.under_test.get_json("example.com", cached=cached) == expected
-            session.request.assert_called_with("GET", "example.com", params=None, headers=None)
-            self.timer.sleep.assert_not_called()
+    @patch("requests_cache.CachedSession")
+    def test_get_cached(self, sessionmaker: Mock):
+        self._test_get(sessionmaker, True)
 
-    def test_get_cached(self):
-        self.test_get("requests_cache.CachedSession", True)
+    def _test_get(self, sessionmaker: Mock, cached: bool):
+        expected = {"hello": "world"}
+        session = self._create_json_response_session(expected)
+        sessionmaker.return_value = session
 
-    def test_get_failed(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.return_value = self._create_json_response_session({}, 404)
+        assert self.under_test.get_json("example.com", cached=cached) == expected
+        session.request.assert_called_with("GET", "example.com", params=None, headers=None)
+        self.timer.sleep.assert_not_called()
 
-            assert self.under_test.get_json("example.com") is None
-            self.timer.sleep.assert_not_called()
+    @patch("requests_cache.CachedSession")
+    def test_get_failed(self, sessionmaker: Mock):
+        sessionmaker.return_value = self._create_json_response_session({}, 404)
+        assert self.under_test.get_json("example.com") is None
+        self.timer.sleep.assert_not_called()
 
-    def test_get_rate_limited_retry_success(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            expected = {"hello": "world"}
-            sessionmaker.side_effect = [
-                self._create_json_response_session({}, 429),
-                self._create_json_response_session(expected, 200)
-            ]
+    @patch("requests_cache.CachedSession")
+    def test_get_rate_limited_retry_success(self, sessionmaker: Mock):
+        expected = {"hello": "world"}
+        sessionmaker.side_effect = [
+            self._create_json_response_session({}, 429),
+            self._create_json_response_session(expected, 200)
+        ]
 
-            assert self.under_test.get_json("example.com") == expected
-            self.timer.sleep.called_with(60)
-            self.timer.sleep.assert_called_once()
+        assert self.under_test.get_json("example.com") == expected
+        self.timer.sleep.called_with(60)
+        self.timer.sleep.assert_called_once()
 
-    def test_get_connection_error_retry_success(self):
+    @patch("requests_cache.CachedSession")
+    def test_get_connection_error_retry_success(self, sessionmaker: Mock):
         counter = {"count": 0}
 
         def get_mock(*_, **__):
@@ -76,65 +80,68 @@ class TestHttpRequester:
                 raise ConnectionError()
             return self._create_json_response_session(expected, 200)
 
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            expected = {"hello": "world"}
-            sessionmaker.side_effect = get_mock
+        expected = {"hello": "world"}
+        sessionmaker.side_effect = get_mock
 
-            assert self.under_test.get_json("example.com") == expected
-            self.timer.sleep.called_with(60)
-            self.timer.sleep.assert_called_once()
+        assert self.under_test.get_json("example.com") == expected
+        self.timer.sleep.called_with(60)
+        self.timer.sleep.assert_called_once()
 
-    def test_get_rate_limited_retry_failure(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.side_effect = [
-                self._create_json_response_session({}, 429),
-                self._create_json_response_session({}, 429),
-                self._create_json_response_session({}, 200)
-            ]
+    @patch("requests_cache.CachedSession")
+    def test_get_rate_limited_retry_failure(self, sessionmaker: Mock):
+        sessionmaker.side_effect = [
+            self._create_json_response_session({}, 429),
+            self._create_json_response_session({}, 429),
+            self._create_json_response_session({}, 200)
+        ]
 
-            assert self.under_test.get_json("example.com") is None
-            self.timer.sleep.called_with(60)
-            self.timer.sleep.called_once()
+        assert self.under_test.get_json("example.com") is None
+        self.timer.sleep.called_with(60)
+        self.timer.sleep.called_once()
 
-    def test_download_file(self, to_patch: str = "requests.session", cached: bool = False):
-        with patch(to_patch) as sessionmaker:
-            expected = b"Hello World"
-            session = self._create_binary_response_session(expected)
-            sessionmaker.return_value = session
+    @patch("requests.session")
+    def test_download_file(self, sessionmaker: Mock):
+        self._test_download_file(sessionmaker, False)
 
-            assert self.under_test.download_file("example.com", cached=cached) == expected
-            session.request.assert_called_with("GET", "example.com", headers={"User-Agent": "Mozilla/5.0"}, params=None)
-            self.timer.sleep.assert_not_called()
+    @patch("requests_cache.CachedSession")
+    def test_download_file_cached(self, sessionmaker: Mock):
+        self._test_download_file(sessionmaker, True)
 
-    def test_download_file_cached(self):
-        self.test_download_file("requests_cache.CachedSession", True)
+    def _test_download_file(self, sessionmaker: Mock, cached: bool):
+        expected = b"Hello World"
+        session = self._create_binary_response_session(expected)
+        sessionmaker.return_value = session
 
-    def test_download_file_failed(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.return_value = self._create_binary_response_session(b"", 404)
+        assert self.under_test.download_file("example.com", cached=cached) == expected
+        session.request.assert_called_with("GET", "example.com", headers={"User-Agent": "Mozilla/5.0"}, params=None)
+        self.timer.sleep.assert_not_called()
 
-            assert self.under_test.download_file("example.com") is None
-            self.timer.sleep.assert_not_called()
+    @patch("requests_cache.CachedSession")
+    def test_download_file_failed(self, sessionmaker: Mock):
+        sessionmaker.return_value = self._create_binary_response_session(b"", 404)
 
-    def test_download_file_retry_success(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            expected = b"Hello World"
-            sessionmaker.side_effect = [self._create_binary_response_session(b"", 429),
-                                        self._create_binary_response_session(expected, 200)]
+        assert self.under_test.download_file("example.com") is None
+        self.timer.sleep.assert_not_called()
 
-            assert self.under_test.download_file("example.com") == expected
-            self.timer.sleep.called_with(60)
-            self.timer.sleep.called_once()
+    @patch("requests_cache.CachedSession")
+    def test_download_file_retry_success(self, sessionmaker: Mock):
+        expected = b"Hello World"
+        sessionmaker.side_effect = [self._create_binary_response_session(b"", 429),
+                                    self._create_binary_response_session(expected, 200)]
 
-    def test_download_file_retry_failed(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.side_effect = [self._create_binary_response_session(b"", 429),
-                                        self._create_binary_response_session(b"", 429),
-                                        self._create_binary_response_session(b"", 200)]
+        assert self.under_test.download_file("example.com") == expected
+        self.timer.sleep.called_with(60)
+        self.timer.sleep.called_once()
 
-            assert self.under_test.download_file("example.com") is None
-            self.timer.sleep.called_with(60)
-            self.timer.sleep.called_once()
+    @patch("requests_cache.CachedSession")
+    def test_download_file_retry_failed(self, sessionmaker: Mock):
+        sessionmaker.side_effect = [self._create_binary_response_session(b"", 429),
+                                    self._create_binary_response_session(b"", 429),
+                                    self._create_binary_response_session(b"", 200)]
+
+        assert self.under_test.download_file("example.com") is None
+        self.timer.sleep.called_with(60)
+        self.timer.sleep.called_once()
 
     def test_request_chache(self):
         url = "https://jsonplaceholder.typicode.com/todos/"
@@ -151,37 +158,37 @@ class TestHttpRequester:
         assert initial_delta > cached_delta
         assert expected == self.under_test.get_json(url)
 
-    def test_uncached_delay(self):
-        with patch("requests.session") as sessionmaker:
-            sessionmaker.return_value = self._create_json_response_session({})
+    @patch("requests.session")
+    def test_uncached_delay(self, sessionmaker: Mock):
+        sessionmaker.return_value = self._create_json_response_session({})
 
-            self.under_test.get_json("example.com", cached=False, delay=100.0)
+        self.under_test.get_json("example.com", cached=False, delay=100.0)
 
-            self.timer.sleep.assert_called_with(100.0)
+        self.timer.sleep.assert_called_with(100.0)
 
-    def test_uncached_delay_zero(self):
-        with patch("requests.session") as sessionmaker:
-            sessionmaker.return_value = self._create_json_response_session({})
+    @patch("requests.session")
+    def test_uncached_delay_zero(self, sessionmaker: Mock):
+        sessionmaker.return_value = self._create_json_response_session({})
 
-            self.under_test.get_json("example.com", cached=False, delay=0.0)
+        self.under_test.get_json("example.com", cached=False, delay=0.0)
 
-            self.timer.sleep.assert_not_called()
+        self.timer.sleep.assert_not_called()
 
-    def test_cached_delay_miss(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.return_value = self._create_json_response_session({})
+    @patch("requests_cache.CachedSession")
+    def test_cached_delay_miss(self, sessionmaker: Mock):
+        sessionmaker.return_value = self._create_json_response_session({})
 
-            self.under_test.get_json("example.com", cached=True, delay=100.0)
+        self.under_test.get_json("example.com", cached=True, delay=100.0)
 
-            self.timer.sleep.assert_called_with(100.0)
+        self.timer.sleep.assert_called_with(100.0)
 
-    def test_cached_delay_hit(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.return_value = self._create_json_response_session({}, was_cached=True)
+    @patch("requests_cache.CachedSession")
+    def test_cached_delay_hit(self, sessionmaker: Mock):
+        sessionmaker.return_value = self._create_json_response_session({}, was_cached=True)
 
-            self.under_test.get_json("example.com", cached=True, delay=100.0)
+        self.under_test.get_json("example.com", cached=True, delay=100.0)
 
-            self.timer.sleep.assert_not_called()
+        self.timer.sleep.assert_not_called()
 
     def _create_json_response_session(
             self,
