@@ -12,7 +12,6 @@ from manga_dl.model.MangaSeries import MangaSeries
 from manga_dl.model.MangaVolume import MangaVolume
 from manga_dl.util.DateConverter import DateConverter
 from manga_dl.util.HttpRequester import HttpRequester
-from manga_dl.util.Timer import Timer
 
 
 class MangadexApi:
@@ -20,8 +19,7 @@ class MangadexApi:
     logger = logging.getLogger("MangadexApi")
 
     @inject
-    def __init__(self, http_requester: HttpRequester, date_converter: DateConverter, timer: Timer):
-        self.timer = timer
+    def __init__(self, http_requester: HttpRequester, date_converter: DateConverter):
         self.http_requester = http_requester
         self.date_converter = date_converter
 
@@ -37,8 +35,7 @@ class MangadexApi:
             return None
 
     def _call_api(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        self.timer.sleep(0.5)
-        response = self.http_requester.get_json(f"{self.base_url}/{endpoint}", params)
+        response = self.http_requester.get_json(f"{self.base_url}/{endpoint}", params, delay=0.5)
 
         if response is None or response["result"] == "error":
             self.logger.warning(response)
@@ -198,7 +195,8 @@ class MangadexApi:
         }
         cover_bytes = {
             (key, filename): self.http_requester.download_file(
-                f"https://uploads.mangadex.org/covers/{series_id}/{filename}"
+                f"https://uploads.mangadex.org/covers/{series_id}/{filename}",
+                delay=0.1
             )
             for key, filename in cover_filenames.items()
         }

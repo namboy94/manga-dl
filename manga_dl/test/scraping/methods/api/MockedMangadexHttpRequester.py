@@ -37,8 +37,10 @@ class MockedMangadexHttpRequester(HttpRequester):
             self,
             url: str,
             params: Optional[Dict[str, Any]] = None,
-            cached: bool = False
+            cached: bool = False,
+            delay: float = 0.0
     ) -> Optional[Dict[str, Any]]:
+        self.timer.sleep(delay)
 
         params = {} if params is None else params
 
@@ -67,7 +69,8 @@ class MockedMangadexHttpRequester(HttpRequester):
 
             return self._build_response(static_responses[endpoint])
 
-    def download_file(self, url: str, cached: bool = False) -> Optional[bytes]:
+    def download_file(self, url: str, cached: bool = False, delay: float = 0.0) -> Optional[bytes]:
+        self.timer.sleep(delay)
         return self._file_cache.get(url.split("/")[-1], DownloadedFile(b"", "")).data
 
     @staticmethod

@@ -42,7 +42,7 @@ class TestHttpRequester:
             sessionmaker.return_value = session
 
             assert self.under_test.get_json("example.com", cached=cached) == expected
-            session.get.assert_called_with("example.com", params=None)
+            session.request.assert_called_with("GET", "example.com", params=None, headers=None)
             self.timer.sleep.assert_not_called()
 
     def test_get_cached(self):
@@ -96,17 +96,22 @@ class TestHttpRequester:
             self.timer.sleep.called_with(60)
             self.timer.sleep.called_once()
 
-    def test_download_file(self):
-        with patch("requests_cache.CachedSession") as sessionmaker:
+    def test_download_file(self, to_patch: str = "requests.session", cached: bool = False):
+        with patch(to_patch) as sessionmaker:
             expected = b"Hello World"
-            sessionmaker.return_value = self._create_binary_response(expected)
+            session = self._create_binary_response_session(expected)
+            sessionmaker.return_value = session
 
-            assert self.under_test.download_file("example.com") == expected
+            assert self.under_test.download_file("example.com", cached=cached) == expected
+            session.request.assert_called_with("GET", "example.com", headers={"User-Agent": "Mozilla/5.0"}, params=None)
             self.timer.sleep.assert_not_called()
+
+    def test_download_file_cached(self):
+        self.test_download_file("requests_cache.CachedSession", True)
 
     def test_download_file_failed(self):
         with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.return_value = self._create_binary_response(b"", 404)
+            sessionmaker.return_value = self._create_binary_response_session(b"", 404)
 
             assert self.under_test.download_file("example.com") is None
             self.timer.sleep.assert_not_called()
@@ -114,8 +119,8 @@ class TestHttpRequester:
     def test_download_file_retry_success(self):
         with patch("requests_cache.CachedSession") as sessionmaker:
             expected = b"Hello World"
-            sessionmaker.side_effect = [self._create_binary_response(b"", 429),
-                                        self._create_binary_response(expected, 200)]
+            sessionmaker.side_effect = [self._create_binary_response_session(b"", 429),
+                                        self._create_binary_response_session(expected, 200)]
 
             assert self.under_test.download_file("example.com") == expected
             self.timer.sleep.called_with(60)
@@ -123,9 +128,9 @@ class TestHttpRequester:
 
     def test_download_file_retry_failed(self):
         with patch("requests_cache.CachedSession") as sessionmaker:
-            sessionmaker.side_effect = [self._create_binary_response(b"", 429),
-                                        self._create_binary_response(b"", 429),
-                                        self._create_binary_response(b"", 200)]
+            sessionmaker.side_effect = [self._create_binary_response_session(b"", 429),
+                                        self._create_binary_response_session(b"", 429),
+                                        self._create_binary_response_session(b"", 200)]
 
             assert self.under_test.download_file("example.com") is None
             self.timer.sleep.called_with(60)
@@ -146,20 +151,67 @@ class TestHttpRequester:
         assert initial_delta > cached_delta
         assert expected == self.under_test.get_json(url)
 
-    def _create_json_response_session(self, content: Dict[str, Any], status_code: int = 200) -> Mock:
-        response = Mock(Response)
-        response.status_code = status_code
+    def test_uncached_delay(self):
+        with patch("requests.session") as sessionmaker:
+            sessionmaker.return_value = self._create_json_response_session({})
+
+            self.under_test.get_json("example.com", cached=False, delay=100.0)
+
+            self.timer.sleep.assert_called_with(100.0)
+
+    def test_uncached_delay_zero(self):
+        with patch("requests.session") as sessionmaker:
+            sessionmaker.return_value = self._create_json_response_session({})
+
+            self.under_test.get_json("example.com", cached=False, delay=0.0)
+
+            self.timer.sleep.assert_not_called()
+
+    def test_cached_delay_miss(self):
+        with patch("requests_cache.CachedSession") as sessionmaker:
+            sessionmaker.return_value = self._create_json_response_session({})
+
+            self.under_test.get_json("example.com", cached=True, delay=100.0)
+
+            self.timer.sleep.assert_called_with(100.0)
+
+    def test_cached_delay_hit(self):
+        with patch("requests_cache.CachedSession") as sessionmaker:
+            sessionmaker.return_value = self._create_json_response_session({}, was_cached=True)
+
+            self.under_test.get_json("example.com", cached=True, delay=100.0)
+
+            self.timer.sleep.assert_not_called()
+
+    def _create_json_response_session(
+            self,
+            content: Dict[str, Any],
+            status_code: int = 200,
+            was_cached: bool = False
+    ) -> Mock:
+        response = self._create_response(status_code, was_cached)
         response.text = json.dumps(content)
         return self._create_session(response)
 
-    def _create_binary_response(self, content: bytes, status_code: int = 200) -> Mock:
-        response = Mock(Response)
-        response.status_code = status_code
+    def _create_binary_response_session(
+            self,
+            content: bytes,
+            status_code: int = 200,
+            was_cached: bool = False
+    ) -> Mock:
+        response = self._create_response(status_code, was_cached)
         response.content = content
         return self._create_session(response)
 
     @staticmethod
+    def _create_response(status_code: int, was_cached: bool) -> Mock:
+        response = Mock(Response)
+        response.status_code = status_code
+        response.from_cache = was_cached
+        return response
+
+    @staticmethod
     def _create_session(return_value: Response) -> Mock:
         session = Mock(Session)
-        session.get.return_value = return_value
+        session.request.return_value = return_value
         return session

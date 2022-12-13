@@ -16,7 +16,7 @@ class TestMangadexApi:
         self.dateconverter = DateConverter()
         self.timer = Mock(Timer)
         self.requester = MockedMangadexHttpRequester(self.timer)
-        self.under_test = MangadexApi(self.requester, self.dateconverter, self.timer)
+        self.under_test = MangadexApi(self.requester, self.dateconverter)
 
         self.series = TestDataFactory.build_series()
         self.requester.add_series(self.series)

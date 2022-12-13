@@ -30,19 +30,37 @@ class HttpRequester:
             self,
             url: str,
             params: Optional[Dict[str, Any]] = None,
-            cached: bool = True
+            cached: bool = True,
+            delay: float = 0.0
     ) -> Optional[Dict[str, Any]]:
         response = self._handle_request(
-            lambda: self._create_session(cached).get(url, params=params)
+            lambda: self._request("GET", url, params=params, cached=cached, delay=delay)
         )
         return response if response is None else json.loads(response.text)
 
-    def download_file(self, url: str, cached: bool = True) -> Optional[bytes]:
+    def download_file(self, url: str, cached: bool = True, delay: float = 0.0) -> Optional[bytes]:
         headers = {"User-Agent": "Mozilla/5.0"}
         response = self._handle_request(
-            lambda: self._create_session(cached).get(url, headers=headers)
+            lambda: self._request("GET", url, headers=headers, cached=cached, delay=delay)
         )
         return response if response is None else response.content
+
+    def _request(
+            self,
+            method: str,
+            url: str,
+            params: Optional[Dict[str, Any]] = None,
+            headers: Optional[Dict[str, Any]] = None,
+            cached: bool = True,
+            delay: float = 0.0
+    ) -> Response:
+        session = self._create_session(cached)
+        response = session.request(method, url, params=params, headers=headers)
+
+        if delay > 0.0 and (not cached or not response.from_cache):  # type: ignore
+            self.timer.sleep(delay)
+
+        return response
 
     def _handle_request(self, request_generator: Callable[[], Response]) -> Optional[Response]:
 
