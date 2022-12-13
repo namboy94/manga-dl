@@ -56,7 +56,8 @@ class MangadexApi:
         chapters = self._load_chapters(series_id, load_pages)
 
         if len(chapters) > 0:
-            max_volume = max(chapters, key=lambda x: Decimal(0) if x.volume is None else x.volume).volume
+            _max_volume = max(chapters, key=lambda x: Decimal(0) if x.volume is None else x.volume).volume
+            max_volume = Decimal(0) if _max_volume is None else _max_volume
             chapters.sort(key=lambda x: max_volume + 1 if x.volume is None else x.volume)
 
         grouped_by_volume = itertools.groupby(chapters, lambda chapter: chapter.volume)

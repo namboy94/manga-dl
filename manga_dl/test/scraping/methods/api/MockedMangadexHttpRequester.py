@@ -33,7 +33,12 @@ class MockedMangadexHttpRequester(HttpRequester):
     def add_endpoint_override(self, endpoint: str, response: Optional[Dict[str, Any]]):
         self._endpoint_overrides[endpoint] = response
 
-    def get_json(self, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    def get_json(
+            self,
+            url: str,
+            params: Optional[Dict[str, Any]] = None,
+            cached: bool = False
+    ) -> Optional[Dict[str, Any]]:
 
         params = {} if params is None else params
 
@@ -62,7 +67,7 @@ class MockedMangadexHttpRequester(HttpRequester):
 
             return self._build_response(static_responses[endpoint])
 
-    def download_file(self, url: str) -> Optional[bytes]:
+    def download_file(self, url: str, cached: bool = False) -> Optional[bytes]:
         return self._file_cache.get(url.split("/")[-1], DownloadedFile(b"", "")).data
 
     @staticmethod
