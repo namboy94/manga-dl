@@ -48,7 +48,7 @@ class MultipartChapterMerger:
         latest_published_at = max(chapters, key=lambda x: x.published_at).published_at
         merged = chapters.pop(0)
 
-        if merged.number % 1 == Decimal(0):
+        if merged.get_macro_micro_chapter()[1] == 0:
             return self._handle_duplicate(merged, chapters)
 
         merged.published_at = latest_published_at
